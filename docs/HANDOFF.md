@@ -33,15 +33,15 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 The phone app's look was written without ever being viewed, and it does not match the mockups. The user has seen it on an iPhone 17 and reported:
 
-1. **The "Effort" label wraps onto two lines.** It sits in a 40-point column in `apps/mobile/src/PlateParts.tsx` with nothing stopping the wrap.
+1. **The "Effort" label wrapped onto two lines.** Fixed in T4; confirmed on the phone.
 2. **The glass and softness are missing.** The mockups blur what is behind each key and put a blurred coloured glow under lit keys. The app uses flat gradients and has no glow.
-3. **The island pill is thicker than the phone's own cutout,** leaving a visible black border. The user accepted this for now.
+3. **The island pill was thicker than the phone's own cutout,** leaving a visible black border (49 × 137 against 37 × 125). Fixed in T4; confirmed on the phone.
 4. **Left out on purpose so far:** glyphs on keys, the plate's grain texture, and every lit state (all lights are off because nothing is connected).
 
 Two causes sit under all of these:
 
 - **Nobody could see the result.** There is no iPhone simulator on Windows, and only type checks were run.
-- **The mockups are the wrong size.** They are drawn at 844 by 390 points; the phone is 874 by 402 (see "Measured on the iPhone 17" below).
+- **The mockups were the wrong size** (844 by 390; the phone is 874 by 402). Fixed in T3.
 
 ## Measured on the iPhone 17 (2026-11-13, T1)
 
@@ -85,11 +85,13 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Done when:** a session can open the app and a mockup board side by side and compare them. Note in this file which effects the web view cannot be trusted for (glass, shadows, haptics).
 - **Also:** agree with the user that they send a phone screenshot at each visual milestone, because the web view will differ from iOS.
 
-### T3. Redraw the mockups at the real size
+### T3. Redraw the mockups at the real size (done 2026-11-13)
+- **Result:** every phone board is 874 × 402. The closed pill is now the measured cutout, 37 × 125 at x 14, y 139; open states start 14 in, and the key area starts 348 in when the island is open. The canvas positions were spaced for the new size, and the canvas is republished (version 46). All 17 boards regenerated with no `@@` left; a script check in the browser found no key overlapping another or leaving the board, and Island1, Island2, Island9 and Effort1 were looked at. Not checked: the canvas render itself (only local copies were viewed). Open point for T7 or later: the closed pill draws a glyph and a count inside a pill the size of the cutout, where on the phone the camera hardware sits; whether that content can show there is not known.
 - **Do:** change the generators in `design/mockups` from 844 by 390 to the size from T1, and move the island to the measured cutout position. See `design/mockups/README.md`.
 - **Done when:** all boards regenerate with no leftover `@@` tokens, keys do not overlap or overflow, and the canvas is republished.
 
-### T4. Fix the two plain defects
+### T4. Fix the two plain defects (done 2026-11-13)
+- **Result:** the pill is now 37 × 125 (`PlateParts.tsx`), the measured cutout. `islandInset` already centres it on the cutout: with the 62-point inset it sits 13.5 points in (measured 14). The wheel's column is now 60 points wide instead of 40, with its centre still 31 points from the edge (`WHEEL_CENTRE_INSET` in `Deck.tsx`), so "Effort" has room for one line; `Silk` labels also have `numberOfLines={1}`. A first try, a 60-point label overhanging a 40-point column, was cut to "EFFO…" on the web, because React Native Web limits one-line text to its parent's width. Checked in the web view: the label is 41 points wide on one line, the pill is 37 × 125 centred at y 201. Phone screenshot from the user (iPhone 17, Expo Go): "EFFORT" is on one line, about 820 to 865 points across; the pill measures about 37.5 × 125, from x 13.5 to 51 and y 138.5 to 263.5, which matches the measured cutout to within a point. The screenshot does not show the real cutout (no call was running), so the user checked by eye on the phone: the pill and the cutout match 1:1, with no border.
 - **Do:** stop the "Effort" label wrapping, and set the island pill's margin from the T1 measurements.
 - **Done when:** checked in the T2 view and confirmed by the user on the phone.
 

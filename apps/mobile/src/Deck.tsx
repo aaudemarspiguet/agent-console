@@ -4,14 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { KeyId } from '@deck/protocol';
 import { Key } from './Key';
 import { COLUMNS, DEFAULT_KEYS, ROWS } from './layout';
-import { EffortWheel, ISLAND_PILL_WIDTH, IslandPill, StatusStrip } from './PlateParts';
+import { EffortWheel, ISLAND_PILL_WIDTH, IslandPill, StatusStrip, WHEEL_COLUMN_WIDTH } from './PlateParts';
 import { useCameraSide } from './useCameraSide';
 
 const GAP = 9;
 /** Room kept at each end of the plate: one end for the island, the other for the effort wheel. */
 const END_MARGIN = 62;
-/** Distance of the effort wheel from the screen edge. */
-const WHEEL_INSET = 11;
+/** Distance of the effort wheel's centre from the screen edge (as in the mockups: 11 + 40 / 2). */
+const WHEEL_CENTRE_INSET = 31;
 /** Where the island pill sits on a phone with no camera cutout to wrap. */
 const ISLAND_FALLBACK_INSET = 8;
 
@@ -63,7 +63,7 @@ export function Deck({ onKeyPress }: DeckProps) {
       <View style={[styles.edge, { [cameraSide]: islandInset(insets[cameraSide]) }]} pointerEvents="none">
         <IslandPill />
       </View>
-      <View style={[styles.edge, { [wheelSide]: WHEEL_INSET }]}>
+      <View style={[styles.edge, { [wheelSide]: WHEEL_CENTRE_INSET - WHEEL_COLUMN_WIDTH / 2 }]}>
         <EffortWheel />
       </View>
 

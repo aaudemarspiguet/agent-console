@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { type StyleProp, StyleSheet, Text, type TextStyle, View } from 'react-native';
 
 /** A small indicator light on the plate. Only lights change outside the island (K-3). */
 export function Led({ color, label }: { color?: string; label: string }) {
@@ -25,8 +25,12 @@ function Screw() {
 }
 
 /** Fixed marking printed on the plate. */
-export function Silk({ children }: { children: string }) {
-  return <Text style={styles.silk}>{children}</Text>;
+export function Silk({ children, style }: { children: string; style?: StyleProp<TextStyle> }) {
+  return (
+    <Text style={[styles.silk, style]} numberOfLines={1}>
+      {children}
+    </Text>
+  );
 }
 
 /** The row above the keys: the Link light and the Request light. */
@@ -68,11 +72,15 @@ export function EffortWheel() {
 }
 
 /**
- * Size of the closed island. Apple's cutout is about 37 by 125 points, so this
- * leaves a black margin of about 6 points all round it.
+ * Size of the closed island: the iPhone 17's cutout as measured in landscape
+ * (docs/HANDOFF.md, T1), so the pill and the cutout show as one shape with no
+ * black margin round it.
  */
-export const ISLAND_PILL_WIDTH = 49;
-const ISLAND_PILL_LENGTH = 137;
+export const ISLAND_PILL_WIDTH = 37;
+
+/** Width of the wheel's column: slot, light and label. */
+export const WHEEL_COLUMN_WIDTH = 60;
+const ISLAND_PILL_LENGTH = 125;
 
 /** The island when closed: a black pill around the camera cutout (K-7). */
 export function IslandPill() {
@@ -123,8 +131,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.75)',
     transform: [{ rotate: '35deg' }],
   },
+  /** Wide enough for the "Effort" label on one line; the 34-point slot is centred in it. */
   wheel: {
-    width: 40,
+    width: WHEEL_COLUMN_WIDTH,
     alignItems: 'center',
     gap: 7,
   },
