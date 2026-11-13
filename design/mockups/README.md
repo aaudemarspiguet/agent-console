@@ -23,13 +23,15 @@ The last line it prints must show `left tokens: 0`.
 - **Keep them ASCII.** A non-ASCII character in a here-string has broken the output before.
 - **Placeholders are `@@NAME@@`** and are filled by plain text replacement. A leftover `@@` in a board is a bug.
 - **Files are written as UTF-8 without a byte-order mark.**
-- **Board size is 844 by 390 points** today, which is not the iPhone 17's size. See T3 in `docs/HANDOFF.md`.
+- **Board size is 874 by 402 points,** the iPhone 17 in landscape as measured in T1 (`docs/HANDOFF.md`).
 
 ## Geometry in use
 
 - Key grid: five columns by four rows, 9-point gaps.
-- Island closed: a pill 38 by 140, 10 points from the camera edge. Open: 320 by 366. Half height: 320 by 170.
-- Key area: starts 62 points from the camera edge when the island is closed and 344 when it is open; ends 62 points from the other edge, where the effort wheel sits.
+- Island closed: a pill 37 by 125 at x 14, y 139, the iPhone 17's measured cutout; the hidden-request pill is 37 by 164, centred on the same line. Open: 320 by 378, 12 points from top and bottom. Half height: 320 by 170, centred. All start 14 points from the camera edge.
+- Camera dot: centred on the cutout's centre, x 32, y 201.
+- Effort wheel: centred top to bottom (top 100).
+- Key area: starts 62 points from the camera edge when the island is closed and 348 when it is open; ends 62 points from the other edge, where the effort wheel sits.
 
 ## Publish to the canvas
 

@@ -48,7 +48,7 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 @media (prefers-reduced-motion: reduce){.key{transition:none}}
 </style>
 </helmet>
-<div class="plate" style="width: 844px; height: 390px; box-sizing: border-box; padding: 16px 62px 21px; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; display: flex; gap: 14px">
+<div class="plate" style="width: 874px; height: 402px; box-sizing: border-box; padding: 16px 62px 21px; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; display: flex; gap: 14px">
   <div class="bezel" style="width: 290px; box-sizing: border-box; padding: 8px; border-radius: 24px; display: flex">
     <div style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 14px 8px 12px; border-radius: 16px; background: #000000; border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column">
 @@SCREEN@@
@@ -102,7 +102,7 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":874,"height":402}}'>
 class Component extends DCLogic {
 renderVals() {
 return {};

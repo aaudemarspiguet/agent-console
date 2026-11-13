@@ -54,10 +54,10 @@ $index = @'
 <body>
 <div class="bar">
   <label>Board <select id="board">@@OPTIONS@@</select></label>
-  <span>Mockup 844 x 390 (top) | App 874 x 402 at http://localhost:8090 (bottom)</span>
+  <span>Mockup 874 x 402 (top) | App 874 x 402 at http://localhost:8090 (bottom)</span>
 </div>
 <div class="lbl">Mockup</div>
-<iframe id="mock" width="844" height="390"></iframe>
+<iframe id="mock" width="874" height="402"></iframe>
 <div class="lbl">App (web view; not iOS)</div>
 <iframe id="app" src="http://localhost:8090" width="874" height="402"></iframe>
 <script>

@@ -50,10 +50,10 @@ $gridTpl = '<div class="g4" style="flex-grow: 1; min-height: 0; display: grid; g
 $keys = $keys + 'k5','k6','rep1','rep2'
 
 $css = $baseCss + "`n" + @'
-.isl{position:absolute;z-index:4;left:10px;background:#000;overflow:hidden;box-sizing:border-box}
-.isl.shut{width:38px;border-radius:19px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:15px 0}
+.isl{position:absolute;z-index:4;left:14px;background:#000;overflow:hidden;box-sizing:border-box}
+.isl.shut{width:37px;border-radius:18.5px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:15px 0}
 .isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
-.cam{position:absolute;z-index:6;left:22px;top:188px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
+.cam{position:absolute;z-index:6;left:25px;top:194px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
 .tap{position:absolute;z-index:7;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.92);background:rgba(255,255,255,.2)}
 .cnum{font-size:15px;line-height:18px;font-weight:600}
 .xv{box-sizing:border-box;height:100%;padding:16px 16px 14px 54px;display:flex;flex-direction:column}
@@ -84,7 +84,7 @@ $css = $baseCss + "`n" + @'
 .g4 .alt{top:9px;right:10px;font-size:9px;line-height:12px;letter-spacing:.1px}
 .g4 .num{font-size:20px;line-height:24px}
 .g4 .dot{top:8px;left:9px}
-.whl{position:absolute;z-index:3;right:11px;top:94px;width:40px;display:flex;flex-direction:column;align-items:center;gap:7px}
+.whl{position:absolute;z-index:3;right:11px;top:100px;width:40px;display:flex;flex-direction:column;align-items:center;gap:7px}
 .whl .silk{white-space:nowrap}
 .wslot{position:relative;width:34px;height:168px;box-sizing:border-box;padding:4px;border-radius:17px;background:#050506;box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.07)}
 .wslot.ring{outline:2px solid rgba(255,255,255,.92);outline-offset:3px}
@@ -113,7 +113,7 @@ $doc = @'
 @@CSS@@
 </style>
 </helmet>
-<div class="plate" style="position: relative; width: 844px; height: 390px; overflow: hidden; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif">
+<div class="plate" style="position: relative; width: 874px; height: 402px; overflow: hidden; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif">
 @@ISLAND@@
   <span class="cam" aria-hidden="true"></span>
 @@TAP@@
@@ -125,7 +125,7 @@ $doc = @'
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":874,"height":402}}'>
 class Component extends DCLogic {
 renderVals() {
 return {};
@@ -165,11 +165,11 @@ function Svg($d, $sz, $color, $sw) { return '<svg aria-hidden="true" width="' + 
 $pArc = 'M12 3a9 9 0 1 0 9 9'; $pCheck = 'M5 12.5l4.5 4.5L19 7.5'; $pBang = 'M12 5v9M12 18.5h.01'; $pUp = 'M12 20V5M5 12l7-7 7 7'; $pPause = 'M9 6v12M15 6v12'
 
 function Shut($top, $bottom, $tall) {
-  $g = if ($tall) { 'top: 113px; height: 164px' } else { 'top: 125px; height: 140px' }
+  $g = if ($tall) { 'top: 119px; height: 164px' } else { 'top: 139px; height: 125px' }
   return '  <div class="isl shut" style="' + $g + '">' + $top + $bottom + '</div>'
 }
 function Open($inner, $half) {
-  $g = if ($half) { 'top: 110px; height: 170px; border-radius: 36px' } else { 'top: 12px; height: 366px; border-radius: 38px' }
+  $g = if ($half) { 'top: 116px; height: 170px; border-radius: 36px' } else { 'top: 12px; height: 378px; border-radius: 38px' }
   return '  <div class="isl open" style="' + $g + '">' + "`n" + $inner + "`n" + '  </div>'
 }
 
@@ -312,7 +312,7 @@ function BuildI($file, $title, $island, $open, $reqOn, $k1Color, $offKeys, $pres
 '@
   }
   $h = $doc.Replace('@@TITLE@@', $title).Replace('@@CSS@@', $css).Replace('@@ISLAND@@', $island).Replace('@@TAP@@', $tap).Replace('@@WHEEL@@', $wh.TrimEnd()).Replace('@@STRIP@@', $strip.TrimEnd()).Replace('@@GRID@@', $g.Trim()).Replace('@@SHEET@@', $sheet.TrimEnd())
-  $h = $h.Replace('@@LEFT@@', $(if ($open) { '344' } else { '62' }))
+  $h = $h.Replace('@@LEFT@@', $(if ($open) { '348' } else { '62' }))
   $h = $h.Replace('@@K1GLOW@@', $k1[$k1Color][0]).Replace('@@K1DOT@@', $k1[$k1Color][1])
   foreach ($k in $keys) {
     $c = ''; $w = ''
