@@ -1,3 +1,5 @@
+> Project note: the rest of this file is Expo's template text. Where it conflicts with the repository's root `CLAUDE.md`, the root file wins. In particular: use `pnpm` (`pnpm exec expo ...`), not `npx`, and do not add Expo Router, because the app is a single screen.
+
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
 ## Expo has changed — do not trust your training data

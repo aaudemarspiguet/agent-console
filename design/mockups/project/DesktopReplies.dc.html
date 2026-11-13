@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop saved replies</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+.win{box-sizing:border-box;width:100%;min-height:100%;display:flex;background:#1C1C1E;color:#FFFFFF;font-family:-apple-system,'SF Pro Text','SF Pro Display',Inter,system-ui,sans-serif;font-size:13px;line-height:18px;letter-spacing:-.08px}
+.side{flex:none;width:208px;box-sizing:border-box;padding:20px 12px;background:#161618;border-right:1px solid rgba(84,84,88,.65);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:9px;padding:0 10px 16px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px}
+.nav{display:flex;align-items:center;height:32px;padding:0 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(235,235,245,.6)}
+.nav.on{background:rgba(255,255,255,.1);color:#FFFFFF}
+.sec{color:rgba(235,235,245,.6)}
+.main{flex:1 1 0;min-width:0;box-sizing:border-box;padding:36px 44px;display:flex;flex-direction:column;gap:16px;max-width:860px}
+h1{margin:0 0 4px;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.26px}
+h2{margin:0;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px}
+p{margin:0}
+.card{box-sizing:border-box;padding:18px 20px;border-radius:14px;background:#2C2C2E;display:flex;flex-direction:column;gap:14px}
+.hd{display:flex;align-items:center;gap:12px}
+.btn{flex:none;height:30px;padding:0 14px;border-radius:15px;border:0;background:rgba(255,255,255,.12);color:#FFFFFF;font-size:13px;line-height:18px;font-weight:500;letter-spacing:-.08px}
+.btn:disabled{color:rgba(235,235,245,.3);cursor:default}
+.st{display:flex;align-items:center;gap:6px;flex:none;font-size:13px}
+.d{width:8px;height:8px;border-radius:50%}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:13px;line-height:18px;font-weight:500}
+.in{box-sizing:border-box;width:100%;padding:8px 12px;border-radius:8px;border:1px solid rgba(84,84,88,.65);background:#1C1C1E;color:#FFFFFF;font-family:inherit;font-size:13px;line-height:20px;letter-spacing:-.08px;resize:none}
+.in:focus{outline:2px solid #0A84FF;outline-offset:1px}
+.pair{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+</style>
+</helmet>
+<div class="win" style="min-height: 800px">
+  <nav class="side" aria-label="Sections">
+    <div class="brand"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="#0A84FF"/></svg><span>Deck</span></div>
+    <span class="nav">Phones</span>
+    <span class="nav">Agents</span>
+    <span class="nav on">Saved Replies</span>
+  </nav>
+  <main class="main">
+    <div class="hd"><h1 style="flex: 1 1 0; margin: 0">Saved Replies</h1><span class="sec">2 of 2 used</span><button class="btn" disabled>Add a Reply</button></div>
+    <p class="sec" style="max-width: 68ch">A saved reply is a line you send to an agent with a key instead of speaking it. Write it here, then add its key in layout mode on the phone. A press shows the reply on the phone first, and Send delivers it.</p>
+    <section class="card" aria-label="Saved reply 1">
+      <div class="hd"><h2 style="flex: 1 1 0">Reply 1</h2><span class="st"><span class="d" style="background: #30D158"></span>On the Deck</span><button class="btn">Delete</button></div>
+      <div class="pair">
+        <div class="fld"><label for="l1">Key Legend</label><input id="l1" class="in" value="run tests"><span class="sec">Up to two short words.</span></div>
+        <div class="fld"><label for="r1">Reply</label><textarea id="r1" class="in" rows="3">Run the tests and fix any failures.</textarea></div>
+      </div>
+    </section>
+    <section class="card" aria-label="Saved reply 2">
+      <div class="hd"><h2 style="flex: 1 1 0">Reply 2</h2><span class="st"><span class="d" style="background: #30D158"></span>On the Deck</span><button class="btn">Delete</button></div>
+      <div class="pair">
+        <div class="fld"><label for="l2">Key Legend</label><input id="l2" class="in" value="explain"><span class="sec">Up to two short words.</span></div>
+        <div class="fld"><label for="r2">Reply</label><textarea id="r2" class="in" rows="3">Explain what this does before you run it.</textarea></div>
+      </div>
+    </section>
+    <p class="sec" style="max-width: 68ch">A change is saved when you leave the field, and the phone gets it at once. Saved replies stay on this PC until you delete them.</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

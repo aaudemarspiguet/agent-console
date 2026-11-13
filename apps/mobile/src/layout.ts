@@ -4,6 +4,10 @@ import type { KeyId } from '@deck/protocol';
 export const COLUMNS = 5;
 export const ROWS = 4;
 
+/**
+ * How a key cap is finished, as on the design boards:
+ * number keys are clear glass, action keys are solid, and Allow is the one tinted key.
+ */
 export type KeyLook = 'number' | 'action' | 'primary';
 
 export interface KeyDef {
@@ -18,6 +22,8 @@ export interface KeyDef {
   /** Cells covered. Both default to 1. */
   wide?: number;
   high?: number;
+  /** Corner the legend sits in. Defaults to the left. */
+  legendSide?: 'left' | 'right';
 }
 
 export const DEFAULT_KEYS: KeyDef[] = [
@@ -29,7 +35,7 @@ export const DEFAULT_KEYS: KeyDef[] = [
   { id: 'session4', legend: '4', spoken: 'Session 4', look: 'number', column: 0, row: 1 },
   { id: 'session5', legend: '5', spoken: 'Session 5', look: 'number', column: 1, row: 1 },
   { id: 'session6', legend: '6', spoken: 'Session 6', look: 'number', column: 2, row: 1 },
-  { id: 'allow', legend: 'allow', look: 'primary', column: 3, row: 1, wide: 2, high: 2 },
+  { id: 'allow', legend: 'allow', look: 'primary', column: 3, row: 1, wide: 2, high: 2, legendSide: 'right' },
 
   // The two saved replies are examples. The real ones are written on the PC (R-1).
   { id: 'reply1', legend: 'run tests', spoken: 'Saved reply: run tests', look: 'action', column: 0, row: 2 },
@@ -38,5 +44,5 @@ export const DEFAULT_KEYS: KeyDef[] = [
 
   { id: 'redirect', legend: 'redirect', spoken: 'Redirect, hold to talk', look: 'action', column: 0, row: 3, wide: 2 },
   { id: 'cancel', legend: 'cancel', look: 'action', column: 2, row: 3 },
-  { id: 'send', legend: 'send', look: 'action', column: 3, row: 3, wide: 2 },
+  { id: 'send', legend: 'send', look: 'action', column: 3, row: 3, wide: 2, legendSide: 'right' },
 ];

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Turn the wheel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.plate{background-color:#232326;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px),linear-gradient(180deg,#2C2C30,#19191B)}
+.well{position:relative;display:flex;padding:3px 3px 6px;border-radius:13px;background:#040405;box-shadow:inset 0 2px 4px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.10)}
+.ring{outline:2px solid rgba(255,255,255,.92);outline-offset:2px}
+.glow{position:absolute;left:20%;right:20%;top:32%;bottom:16%;border-radius:50%;filter:blur(14px);opacity:.8}
+.key{position:relative;flex:1 1 0;min-width:0;padding:0;border-radius:10px;color:#fff;border:1px solid rgba(255,255,255,.15);background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08));-webkit-backdrop-filter:blur(14px) saturate(1.7);backdrop-filter:blur(14px) saturate(1.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -5px 9px rgba(0,0,0,.2),0 3px 0 #1A1A1D,0 5px 8px rgba(0,0,0,.6);transition:transform .06s ease-out,box-shadow .06s ease-out;display:flex;align-items:center;justify-content:center}
+.key.solid{border-color:rgba(255,255,255,.1);background:linear-gradient(180deg,#343437,#252527);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -5px 9px rgba(0,0,0,.25),0 3px 0 #111113,0 5px 8px rgba(0,0,0,.6)}
+.key:active,.key.down{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -3px 6px rgba(0,0,0,.3),0 1px 0 #1A1A1D,0 1px 3px rgba(0,0,0,.6)}
+.key.tint{border-color:rgba(255,255,255,.26);background:linear-gradient(180deg,#3493FF,#0A84FF);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 9px rgba(0,40,110,.28),0 3px 0 #0A4FA3,0 5px 8px rgba(0,0,0,.6)}
+.key.tint:active,.key.tint.down{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #0A4FA3,0 1px 3px rgba(0,0,0,.6)}
+.key.off{color:rgba(255,255,255,.3)}
+.key.tint.off{border-color:rgba(255,255,255,.13);color:rgba(255,255,255,.42);background:linear-gradient(180deg,#224B7B,#16365C);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -5px 9px rgba(0,20,60,.3),0 3px 0 #0C2748,0 5px 8px rgba(0,0,0,.6)}
+.num{font-size:24px;line-height:29px;font-weight:400;letter-spacing:.2px}
+.leg{position:absolute;bottom:9px;font-size:13px;line-height:16px;font-weight:500;letter-spacing:-.08px;text-align:left}
+.leg.l{left:11px}
+.leg.r{right:11px;text-align:right}
+.alt{position:absolute;top:9px;right:11px;font-size:11px;line-height:13px;font-weight:400;letter-spacing:.06px;opacity:.55}
+.gl{position:absolute;top:9px;width:15px;height:15px;opacity:.85}.gl.l{left:10px}.gl.r{right:10px}
+.dot{position:absolute;top:10px;left:11px;width:6px;height:6px;border-radius:50%}
+.bezel{background:linear-gradient(180deg,#0C0C0D,#050506);box-shadow:inset 0 2px 6px rgba(0,0,0,1),0 1px 0 rgba(255,255,255,.12)}
+.silk{font-size:10px;line-height:12px;font-weight:500;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.screw{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#6A6A70,#2A2A2D 70%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.12);position:relative}
+.screw::after{content:"";position:absolute;left:2px;right:2px;top:5.5px;height:1px;background:rgba(0,0,0,.75);transform:rotate(35deg)}
+.led{width:8px;height:8px;border-radius:50%;outline:2px solid #050506}
+.row{display:flex;align-items:center;gap:10px;height:52px;padding:0 8px;border-radius:12px}
+.n{width:10px;font-size:13px;line-height:18px;color:rgba(235,235,245,.6)}
+.nm{font-size:15px;line-height:20px;font-weight:500;letter-spacing:-.23px}
+.st{font-size:12px;line-height:16px;color:rgba(235,235,245,.6)}
+.foot{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:rgba(235,235,245,.6)}
+.pd{width:6px;height:6px;border-radius:50%;background:rgba(235,235,245,.3)}
+@media (prefers-reduced-transparency: reduce){.key{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-reduced-motion: reduce){.key{transition:none}}
+.isl{position:absolute;z-index:4;left:10px;background:#000;overflow:hidden;box-sizing:border-box}
+.isl.shut{width:38px;border-radius:19px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:15px 0}
+.isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
+.cam{position:absolute;z-index:6;left:22px;top:188px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
+.tap{position:absolute;z-index:7;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.92);background:rgba(255,255,255,.2)}
+.cnum{font-size:15px;line-height:18px;font-weight:600}
+.xv{box-sizing:border-box;height:100%;padding:16px 16px 14px 54px;display:flex;flex-direction:column}
+.xs{box-sizing:border-box;height:100%;padding:0 18px 0 56px;display:flex;align-items:center;gap:12px}
+.xh{display:flex;align-items:center;gap:10px}
+.xt{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+.big{font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.43px}
+.xsub{padding:12px 4px 8px;font-size:13px;line-height:18px;letter-spacing:-.08px;color:rgba(235,235,245,.6);display:flex;align-items:center;gap:6px}
+.box{flex-grow:1;min-height:0;box-sizing:border-box;padding:12px;border-radius:12px;background:#1C1C1E}
+.code{font-family:ui-monospace,'SF Mono',Menlo,'Cascadia Code',Consolas,monospace;font-size:13px;line-height:20px;overflow-wrap:anywhere}
+.say{font-size:17px;line-height:23px;letter-spacing:-.43px}
+.bdg{width:42px;height:42px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.lay p{margin:0;padding:0 4px 9px;font-size:13px;line-height:18px;letter-spacing:-.08px}
+.cap{height:36px;padding:0 16px;border-radius:18px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);color:#fff;font-size:15px;line-height:20px;font-weight:500;letter-spacing:-.23px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.cap.blue{background:#0A84FF;border-color:rgba(255,255,255,.28);font-weight:600}
+.bd{position:absolute;z-index:2;top:-7px;left:-7px;width:22px;height:22px;padding:0;border-radius:50%;background:#8E8E93;border:1px solid rgba(255,255,255,.3);box-shadow:0 2px 5px rgba(0,0,0,.5)}
+.bd::after{content:"";position:absolute;left:5px;right:5px;top:9px;height:2px;border-radius:1px;background:#fff}
+.grp{position:absolute;z-index:1;left:-5px;right:-5px;bottom:-5px;height:calc((100% - 27px) / 4 + 10px);box-sizing:border-box;border-radius:17px;border:1.5px solid rgba(255,255,255,.42);pointer-events:none}
+.grp .bd{pointer-events:auto}
+.slot{border-radius:13px;border:1.5px dashed rgba(255,255,255,.3)}
+.sheet{position:absolute;z-index:5;left:0;right:0;top:0;bottom:0;box-sizing:border-box;padding:14px 16px;border-radius:24px;background:rgba(44,44,46,.82);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 14px 34px rgba(0,0,0,.55);display:flex;flex-direction:column}
+.chip{height:28px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(235,235,245,.7);font-size:13px;line-height:28px;letter-spacing:-.08px}
+.six .row{height:44px}
+.g4 .leg{bottom:8px;font-size:11px;line-height:13px;letter-spacing:0}
+.g4 .leg.l{left:10px}
+.g4 .leg.r{right:10px}
+.g4 .gl{top:9px;width:12px;height:12px;opacity:.7}
+.g4 .alt{top:9px;right:10px;font-size:9px;line-height:12px;letter-spacing:.1px}
+.g4 .num{font-size:20px;line-height:24px}
+.g4 .dot{top:8px;left:9px}
+.whl{position:absolute;z-index:3;right:11px;top:94px;width:40px;display:flex;flex-direction:column;align-items:center;gap:7px}
+.whl .silk{white-space:nowrap}
+.wslot{position:relative;width:34px;height:168px;box-sizing:border-box;padding:4px;border-radius:17px;background:#050506;box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.07)}
+.wslot.ring{outline:2px solid rgba(255,255,255,.92);outline-offset:3px}
+.wcyl{width:100%;height:100%;border-radius:13px;background:linear-gradient(180deg,rgba(0,0,0,.88) 0,rgba(0,0,0,0) 24%,rgba(255,255,255,.1) 50%,rgba(0,0,0,0) 76%,rgba(0,0,0,.88) 100%),repeating-linear-gradient(180deg,#4C4C50 0 2px,#1E1E20 2px 5px);box-shadow:inset 1px 0 0 rgba(255,255,255,.12),inset -1px 0 0 rgba(0,0,0,.6)}
+.ebar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:12px 2px 5px}
+.ebar span{height:6px;border-radius:3px;background:rgba(255,255,255,.16)}
+.ebar span.f{background:#fff}
+.elab{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:0 2px;font-size:11px;line-height:14px;text-align:center;color:rgba(235,235,245,.6)}
+.elab .c{color:#fff;font-weight:600}
+@media (prefers-reduced-transparency: reduce){.sheet{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}.cap{background:#3A3A3C;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div class="plate" style="position: relative; width: 844px; height: 390px; overflow: hidden; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif">
+  <div class="isl open" style="top: 110px; height: 170px; border-radius: 36px">
+    <div class="xv" style="padding-top: 14px; padding-bottom: 12px">
+      <div class="xh"><span class="n">1</span><img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain"><span class="xt"><span class="big">api-server</span><span class="st" style="color: rgba(235,235,245,.6)">Working</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg></div>      <div class="ebar" role="img" aria-label="Effort: high now, xhigh chosen"><span class="f"></span><span class="f"></span><span class="f"></span><span class="f"></span><span></span></div>
+      <div class="elab" aria-hidden="true"><span>low</span><span>medium</span><span>high</span><span class="c">xhigh</span><span>max</span></div>
+      <div style="flex-grow: 1"></div>
+      <div class="foot" style="padding: 0 4px"><span>Effort was high. Keep turning or stop.</span></div>
+    </div>
+  </div>
+  <span class="cam" aria-hidden="true"></span>
+
+  <div class="whl">
+    <span class="led" role="img" aria-label="Effort wheel light" style="background: #FFFFFF; box-shadow: 0 0 8px rgba(255,255,255,.8), inset 0 1px 1px rgba(255,255,255,.6)"></span>
+    <div class="wslot ring" role="slider" aria-label="Effort wheel" aria-orientation="vertical" aria-valuemin="1" aria-valuemax="5" aria-valuenow="3" tabindex="0"><div class="wcyl"></div></div>
+    <span class="silk">Effort</span>
+  </div>
+  <div style="position: absolute; z-index: 3; top: 16px; bottom: 21px; left: 344px; right: 62px; display: flex; flex-direction: column; gap: 9px">
+    <div style="height: 36px; flex: none; display: flex; align-items: center; gap: 8px">
+      <span class="screw" aria-hidden="true"></span>
+      <span class="silk">Link</span>
+      <span class="led" role="img" aria-label="Link light" style="background: #30D158; box-shadow: 0 0 8px #30D158, inset 0 1px 1px rgba(255,255,255,.6)"></span>
+      <div style="flex-grow: 1"></div>
+      <span class="silk">Request</span>
+      <span class="led" role="img" aria-label="Request light" style="background: #3A3A3C; box-shadow: inset 0 1px 2px rgba(0,0,0,.7)"></span>
+      <span class="screw" aria-hidden="true"></span>
+    </div>
+    <div class="g4" style="flex-grow: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 9px">
+      <div class="well">
+        <span class="glow" aria-hidden="true" style="background: #FFFFFF; opacity: .32"></span>
+        <button class="key" aria-label="Session 1"><span class="dot" style="background: #FFFFFF; box-shadow: 0 0 7px #FFFFFF"></span><span class="num">1</span></button>
+      </div>
+      <div class="well">
+        <span class="glow" aria-hidden="true" style="background: #30D158"></span>
+        <button class="key" aria-label="Session 2"><span class="dot" style="background: #30D158; box-shadow: 0 0 7px #30D158"></span><span class="num">2</span></button>
+      </div>
+      <div class="well">
+        <button class="key" aria-label="Session 3"><span class="dot" style="background: #48484A"></span><span class="num">3</span></button>
+      </div>
+      <div class="well" style="grid-column: span 2">
+        <button class="key solid off"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="leg l">deny</span></button>
+      </div>
+      <div class="well">
+        <span class="glow" aria-hidden="true" style="background: #FFFFFF; opacity: .32"></span>
+        <button class="key" aria-label="Session 4"><span class="dot" style="background: #FFFFFF; box-shadow: 0 0 7px #FFFFFF"></span><span class="num">4</span></button>
+      </div>
+      <div class="well">
+        <button class="key" aria-label="Session 5"><span class="dot" style="background: #48484A"></span><span class="num">5</span></button>
+      </div>
+      <div class="well">
+        <span class="glow" aria-hidden="true" style="background: #FFFFFF; opacity: .32"></span>
+        <button class="key" aria-label="Session 6"><span class="dot" style="background: #FFFFFF; box-shadow: 0 0 7px #FFFFFF"></span><span class="num">6</span></button>
+      </div>
+      <div class="well" style="grid-column: span 2; grid-row: span 2">
+        <button class="key tint off"><svg class="gl r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="leg r">allow</span></button>
+      </div>
+      <div class="well">
+        <button class="key solid" aria-label="Saved reply: run tests"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">run<br>tests</span></button>
+      </div>
+      <div class="well">
+        <button class="key solid" aria-label="Saved reply: explain"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">explain</span></button>
+      </div>
+      <div class="well">
+        <button class="key solid off" aria-label="Always allow for this session"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12.5l4 4 8-9M11 15l1.5 1.5 8.5-9"/></svg><span class="alt">session</span><span class="leg l">always<br>allow</span></button>
+      </div>
+      <div class="well" style="grid-column: span 2">
+        <button class="key solid" aria-label="Redirect, hold to talk"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><span class="alt">hold to talk</span><span class="leg l">redirect</span></button>
+      </div>
+      <div class="well">
+        <button class="key solid off"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="leg l">cancel</span></button>
+      </div>
+      <div class="well" style="grid-column: span 2">
+        <button class="key solid off"><svg class="gl r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 12l7-7 7 7"/></svg><span class="leg r">send</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

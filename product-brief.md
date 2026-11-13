@@ -299,7 +299,7 @@ Scope: for a different situation than the core product. It brings back gesture i
 
 1. **Landscape or portrait.** Landscape came from the touchpad. A deck beside a keyboard may read better in portrait.
 2. **Open source, and under which licence.**
-3. **Apple's $99 a year: decided 2026-11-12.** Pay when Release 3 (voice) starts. Releases 1 and 2 are built and used free in Expo Go. Keyboard dictation was rejected because it breaks the no-keyboard rule.
+3. **Apple's $99 a year: decided 2026-11-12.** Pay when Release 3 (voice) starts. Releases 1 and 2 are built and used free in Expo Go. Keyboard dictation was rejected because it breaks the no-keyboard rule. Updated 2026-11-13: the user will pay now and use development builds from the start, so the speech library is installed from day one; Expo Go is used only until the account is active.
 4. **The name.**
 5. **How far to use console typing.** It is approved for the effort wheel only. The same route might also stop a session, switch model, or send a follow-up to an idle session, which this brief still lists as not possible (see "What it cannot do", V-4, S1, S2). None of those is tested or decided.
 6. **Effort on other agents.** E-1 to E-7 cover Claude Code. Whether Codex, Cursor, and Antigravity have an effort setting that can be changed the same way is not researched.

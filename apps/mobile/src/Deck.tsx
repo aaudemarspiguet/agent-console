@@ -1,24 +1,43 @@
 import { useState } from 'react';
-import { type LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { KeyId } from '@deck/protocol';
-import { COLUMNS, DEFAULT_KEYS, type KeyDef, ROWS } from './layout';
+import { Key } from './Key';
+import { COLUMNS, DEFAULT_KEYS, ROWS } from './layout';
+import { EffortWheel, ISLAND_PILL_WIDTH, IslandPill, StatusStrip } from './PlateParts';
+import { useCameraSide } from './useCameraSide';
 
 const GAP = 9;
-/** Room kept at each end of the plate for the island and the effort wheel. */
-const SIDE_MARGIN = 62;
+/** Room kept at each end of the plate: one end for the island, the other for the effort wheel. */
+const END_MARGIN = 62;
+/** Distance of the effort wheel from the screen edge. */
+const WHEEL_INSET = 11;
+/** Where the island pill sits on a phone with no camera cutout to wrap. */
+const ISLAND_FALLBACK_INSET = 8;
+
+/**
+ * Distance of the island pill from the camera edge. iOS does not report where the
+ * cutout is, but it sits near the middle of the safe-area inset on that edge
+ * (about 1 point further in), so the pill is centred there to wrap it.
+ */
+function islandInset(cameraEdgeInset: number): number {
+  if (cameraEdgeInset < ISLAND_PILL_WIDTH) return ISLAND_FALLBACK_INSET;
+  return cameraEdgeInset / 2 + 1 - ISLAND_PILL_WIDTH / 2;
+}
 
 interface DeckProps {
   onKeyPress: (id: KeyId) => void;
 }
 
 /**
- * The plate and its keys, with the island closed. The keys do nothing yet beyond
- * the press movement and haptic (K-4); the island and the effort wheel are not built.
+ * The plate with the island closed: status strip, key grid, island pill and
+ * effort wheel. Nothing is connected yet, so the Link light is off and a key
+ * press only gives the press movement and haptic (K-4).
  */
 export function Deck({ onKeyPress }: DeckProps) {
   const insets = useSafeAreaInsets();
+  const cameraSide = useCameraSide();
+  const wheelSide = cameraSide === 'left' ? 'right' : 'left';
   const [grid, setGrid] = useState({ width: 0, height: 0 });
 
   const onGridLayout = (event: LayoutChangeEvent) => {
@@ -34,14 +53,21 @@ export function Deck({ onKeyPress }: DeckProps) {
       style={[
         styles.plate,
         {
-          paddingLeft: Math.max(insets.left, SIDE_MARGIN),
-          paddingRight: Math.max(insets.right, SIDE_MARGIN),
+          paddingLeft: Math.max(insets.left, END_MARGIN),
+          paddingRight: Math.max(insets.right, END_MARGIN),
           paddingTop: Math.max(insets.top, 16),
           paddingBottom: Math.max(insets.bottom, 21),
         },
       ]}
     >
-      <View style={styles.pill} accessibilityLabel="Island, closed" />
+      <View style={[styles.edge, { [cameraSide]: islandInset(insets[cameraSide]) }]} pointerEvents="none">
+        <IslandPill />
+      </View>
+      <View style={[styles.edge, { [wheelSide]: WHEEL_INSET }]}>
+        <EffortWheel />
+      </View>
+
+      <StatusStrip linked={false} requestWaiting={false} />
       <View style={styles.grid} onLayout={onGridLayout}>
         {grid.width > 0 &&
           DEFAULT_KEYS.map((key) => (
@@ -60,98 +86,21 @@ export function Deck({ onKeyPress }: DeckProps) {
   );
 }
 
-interface KeyProps {
-  def: KeyDef;
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-  onPress: (id: KeyId) => void;
-}
-
-function Key({ def, left, top, width, height, onPress }: KeyProps) {
-  const isNumber = def.look === 'number';
-  return (
-    <View style={[styles.well, { left, top, width, height }]}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={def.spoken ?? def.legend}
-        onPressIn={() => {
-          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }}
-        onPress={() => onPress(def.id)}
-        style={({ pressed }) => [
-          styles.key,
-          def.look === 'primary' && styles.keyPrimary,
-          isNumber ? styles.keyCentered : styles.keyLegendCorner,
-          pressed && styles.keyDown,
-        ]}
-      >
-        <Text style={isNumber ? styles.number : styles.legend} numberOfLines={2}>
-          {def.legend}
-        </Text>
-      </Pressable>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   plate: {
     flex: 1,
+    gap: GAP,
     backgroundColor: '#232326',
+    backgroundImage: 'linear-gradient(180deg, #2C2C30, #19191B)',
   },
-  pill: {
+  /** Holds the island or the wheel against one screen edge, centred top to bottom. */
+  edge: {
     position: 'absolute',
-    left: 10,
-    top: '50%',
-    marginTop: -70,
-    width: 38,
-    height: 140,
-    borderRadius: 19,
-    backgroundColor: '#000000',
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
   },
   grid: {
     flex: 1,
-  },
-  well: {
-    position: 'absolute',
-    paddingHorizontal: 3,
-    paddingTop: 3,
-    paddingBottom: 6,
-    borderRadius: 13,
-    backgroundColor: '#040405',
-  },
-  key: {
-    flex: 1,
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.15)',
-    backgroundColor: '#2C2C2E',
-  },
-  keyPrimary: {
-    backgroundColor: '#0A84FF',
-    borderColor: 'rgba(255,255,255,0.26)',
-  },
-  keyCentered: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  keyLegendCorner: {
-    justifyContent: 'flex-end',
-    paddingHorizontal: 10,
-    paddingBottom: 8,
-  },
-  keyDown: {
-    transform: [{ translateY: 2 }],
-    opacity: 0.85,
-  },
-  number: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  legend: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '500',
   },
 });

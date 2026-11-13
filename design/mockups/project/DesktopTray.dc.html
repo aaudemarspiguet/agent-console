@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop tray menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+.win{box-sizing:border-box;width:100%;min-height:100%;display:flex;background:#1C1C1E;color:#FFFFFF;font-family:-apple-system,'SF Pro Text','SF Pro Display',Inter,system-ui,sans-serif;font-size:13px;line-height:18px;letter-spacing:-.08px}
+.side{flex:none;width:208px;box-sizing:border-box;padding:20px 12px;background:#161618;border-right:1px solid rgba(84,84,88,.65);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:9px;padding:0 10px 16px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px}
+.nav{display:flex;align-items:center;height:32px;padding:0 10px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(235,235,245,.6)}
+.nav.on{background:rgba(255,255,255,.1);color:#FFFFFF}
+.sec{color:rgba(235,235,245,.6)}
+.main{flex:1 1 0;min-width:0;box-sizing:border-box;padding:36px 44px;display:flex;flex-direction:column;gap:16px;max-width:860px}
+h1{margin:0 0 4px;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.26px}
+h2{margin:0;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.23px}
+p{margin:0}
+.card{box-sizing:border-box;padding:18px 20px;border-radius:14px;background:#2C2C2E;display:flex;flex-direction:column;gap:12px}
+.line{display:flex;align-items:center;gap:12px;min-height:44px}
+.line + .line{border-top:1px solid rgba(84,84,88,.65);padding-top:12px}
+.grow{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nm{font-size:13px;line-height:18px;font-weight:500}
+.btn{flex:none;height:30px;padding:0 14px;border-radius:15px;border:0;background:rgba(255,255,255,.12);color:#FFFFFF;font-size:13px;line-height:18px;font-weight:500;letter-spacing:-.08px}
+.btn.blue{background:#0A84FF}
+.st{display:flex;align-items:center;gap:6px;flex:none;font-size:13px}
+.d{width:8px;height:8px;border-radius:50%}
+.tg{flex:none;width:40px;height:24px;border-radius:12px;background:#30D158;position:relative}
+.tg::after{content:"";position:absolute;right:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#FFFFFF;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.mono{font-family:ui-monospace,'SF Mono',Menlo,'Cascadia Code',Consolas,monospace;font-size:12px;letter-spacing:0}
+</style>
+</helmet>
+<div style="width: 320px; height: 248px; box-sizing: border-box; padding: 10px; background: #0E0E10; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; font-size: 13px; line-height: 18px; letter-spacing: -0.08px">
+  <div style="height: 100%; box-sizing: border-box; padding: 16px; border-radius: 16px; background: #2C2C2E; border: 1px solid rgba(84,84,88,.65); display: flex; flex-direction: column; gap: 12px">
+    <div class="brand" style="padding: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="#0A84FF"/></svg><span>Deck</span></div>
+    <div class="line" style="min-height: 0">
+      <div class="grow"><span class="nm">Amogh's iPhone</span><span class="sec">Local Wi-Fi, encrypted</span></div>
+      <span class="st"><span class="d" style="background: #30D158"></span>Connected</span>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <button class="btn blue" style="height: 34px; border-radius: 17px">Pair a Phone</button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <button class="btn" style="height: 34px; border-radius: 17px">Open Deck</button>
+      <button class="btn" style="height: 34px; border-radius: 17px">Quit</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":320,"height":248}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
