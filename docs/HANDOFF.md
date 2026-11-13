@@ -1,6 +1,6 @@
 # Handoff: state of the project on 2026-11-13
 
-Read this with [product-brief.md](../product-brief.md) (version 7), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
+Read this with [product-brief.md](../product-brief.md) (version 8), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
 
 ## What the product is
 
@@ -10,7 +10,7 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 | Path | What it is | State |
 |---|---|---|
-| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 7) |
+| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 8) |
 | `competitor-research.md` | Earlier research on similar products | Reference |
 | `apps/mobile` | The phone app: Expo SDK 58, React Native 0.88, TypeScript | Runs in Expo Go; one screen; does not match the design yet |
 | `apps/agent` | The PC side: a Node script | Stub. Prints protocol version and network addresses |
@@ -95,12 +95,19 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Do:** stop the "Effort" label wrapping, and set the island pill's margin from the T1 measurements.
 - **Done when:** checked in the T2 view and confirmed by the user on the phone.
 
-### T5. Choose how to draw glass and glow
+### T5. Choose how to draw glass and glow (done 2026-11-13)
+- **Choice:** **Liquid Glass "clear" tinted 25% black** (`glassEffectStyle="clear"`, `colorScheme="dark"`, `tintColor="rgba(0,0,0,0.25)"`, sample T1). First round: the user ranked C2 (clear), C1 (regular), D (Skia). They then found C1 easier to read but "a little too milky and diffuse", and plain C2 let the glow wash out the legend, so a second round tried C2 tinted black at 25%, 45% and 65%. The user liked the "glossy heaviness" of 25% and would accept C1 too; 25% was chosen, C1 is the runner-up. At 65% the white glow almost vanished. They suggested a later theme setting to switch between C2, C1 and D; it is in the brief as an idea under open decisions (7), not a requirement. The brief's N-5 now says this. Open: what older iPhones and Android show, since `GlassView` falls back to a plain view there; D runs everywhere and was ranked third.
+- **Phone screenshot (iPhone 17, Expo Go):** the readout said "glass API available, Liquid Glass on". C2 bends the glow towards the cap's edges and lights its rim, which neither the web nor the mockup can show. **Bug in D:** the white-lit Skia key drew no glow at all on the phone (a black cap), while the green one did, and both work on the web. Not investigated; fix it before D is used as a fallback or theme.
+- **Work done:**
+  - **From live docs (Expo SDK 58 reference pages):** `expo-glass-effect` (~58.0.5), `expo-blur` (~58.0.6) and `@shopify/react-native-skia` (2.14.0) are all included in Expo Go, so none needs a development build. `GlassView` is Apple's Liquid Glass, iOS 26 and later only; elsewhere it falls back to a plain `View` (no Android, no web), and the docs say to check `isGlassEffectAPIAvailable()` first and not to set opacity below 1 on it or its parents. `BlurView` works on iOS, Android and web, but on Android it needs a `BlurTargetView` and `blurMethod`, and it ignores `borderRadius` unless it clips (`overflow: 'hidden'`). Skia on the web needs CanvasKit: `pnpm --filter mobile setup-skia-web` copies `canvaskit.wasm` into `apps/mobile/public` (ignored by git), and `WithSkiaWeb` loads it. React Native's own `filter: blur()` is Android only, so the plain options draw the glow as a `radial-gradient` background instead (documented in React Native's view style props).
+  - **Samples:** `apps/mobile/src/materials/` draws the same number key five ways, each lit green and white: A plain (gradient glow under a see-through cap, no library), B `expo-blur`, C1 Liquid Glass "regular", C2 Liquid Glass "clear", D Skia (a real 14-point blurred glow and a backdrop blur, like the mockup's CSS); round 2 added T1 to T3, clear glass tinted black at 25%, 45% and 65%. `SHOWN` in the file picks the five columns on screen. `SCREEN` in `App.tsx` is back on `'deck'`; set it to `'materials'` to see the samples again. Keep them until T6 has used them, then delete the folder.
+  - **Checked in the web view:** all five render with no console errors. C1 and C2 show no glass there (expected). The user judged them on the phone.
+  - **Install note:** `pnpm add` failed twice with "failed to rename staging directory" while the `deck-web` server was running; it worked once the server was stopped. Stop Metro servers before installing.
 - **Do:** from live documentation, find which of these work in Expo Go and which need a development build: Expo's glass-effect library (Apple's real Liquid Glass), `expo-blur`, and a drawing library such as React Native Skia. Build one number key each way that is practical, with its coloured glow lit, and compare with the mockup.
 - **Done when:** the user has picked one from screenshots. Note for them: glass only looks like glass with something behind it, and in the mockup most of that comes from the glow under lit keys.
 
 ### T6. Restyle the deck to match the mockups
-- **Do:** apply the choice from T5 to every key, add the glow and lit states behind a temporary demo switch, and add the plate grain if it can be done cheaply.
+- **Do:** apply the choice from T5 (Liquid Glass "clear" tinted 25% black, sample T1 in `src/materials/Materials.tsx`) to every key, add the glow and lit states behind a temporary demo switch, and add the plate grain if it can be done cheaply.
 - **Done when:** the T2 view matches the redrawn mockup board "1 · At rest", and the user confirms on the phone.
 
 ### T7. Decide legends and glyphs (needs the user)

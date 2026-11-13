@@ -1,6 +1,6 @@
 # Product brief: phone deck for coding agents
 
-Version 7, 2026-11-13. Replaces version 6: the deck has six number keys (K-10), two saved-reply keys (R-1 to R-5), and a five-by-four key grid that keeps keys square-ish (K-11). Version 6 made the effort wheel a requirement (E-1 to E-7), delivered by typing into the session's console, a route tested the same day. Version 5 moved the screen into an island beside the camera. Working title only; the final name must not contain "Claude".
+Version 8, 2026-11-13. Replaces version 7: the keys are drawn in Apple's Liquid Glass, "clear" style tinted 25% black (N-5), chosen from samples on the iPhone 17. Version 7: the deck has six number keys (K-10), two saved-reply keys (R-1 to R-5), and a five-by-four key grid that keeps keys square-ish (K-11). Version 6 made the effort wheel a requirement (E-1 to E-7), delivered by typing into the session's console, a route tested the same day. Version 5 moved the screen into an island beside the camera. Working title only; the final name must not contain "Claude".
 
 ## The idea
 
@@ -293,7 +293,7 @@ Scope: for a different situation than the core product. It brings back gesture i
 - **N-2 Speed:** a request appears on the phone, and an answer reaches the agent, without a wait you notice on home Wi-Fi; the measured target is set in the spike.
 - **N-3 Privacy:** nothing leaves the local network; speech is transcribed on the phone; commands and transcripts are not stored.
 - **N-4 Safety:** the hook installers never overwrite a user's existing hooks, and uninstalling restores the original file.
-- **N-5 Look:** Liquid Glass only on floating controls, one tinted primary action per screen, and status never shown by colour alone.
+- **N-5 Look:** the keys are Liquid Glass in the "clear" style tinted 25% black, over a coloured glow when lit (chosen by the user on 2026-11-13 from samples on the phone, handoff T5). The tint keeps the clear glass's glossy, heavy look while giving the legend a darker backdrop; untinted clear glass let the glow wash out the legend. Runner-up: "regular" glass, cleaner and easier to read but more milky; a Skia-drawn blur came after. This goes beyond Apple's advice to keep Liquid Glass to floating controls, on purpose: the deck is meant to look like glass keycaps. Liquid Glass needs iOS 26 or later; what older iPhones and Android (S5) show instead is not decided. One tinted primary action per screen, and status never shown by colour alone.
 
 ## Open decisions
 
@@ -303,3 +303,4 @@ Scope: for a different situation than the core product. It brings back gesture i
 4. **The name.**
 5. **How far to use console typing.** It is approved for the effort wheel only. The same route might also stop a session, switch model, or send a follow-up to an idle session, which this brief still lists as not possible (see "What it cannot do", V-4, S1, S2). None of those is tested or decided.
 6. **Effort on other agents.** E-1 to E-7 cover Claude Code. Whether Codex, Cursor, and Antigravity have an effort setting that can be changed the same way is not researched.
+7. **A key-material setting (idea, not a requirement).** The user suggested on 2026-11-13 a theme option to switch the keys between tinted clear glass, regular glass, and the plainer Skia look. Not scheduled; it would need to pass the stretch-goal rules first.

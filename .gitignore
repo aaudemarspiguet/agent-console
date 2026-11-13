@@ -9,3 +9,5 @@ apps/mobile/ios/
 apps/mobile/android/
 # local comparison pages, rebuilt by design/mockups/make-compare.ps1
 design/mockups/compare/
+# CanvasKit for Skia on the web, copied by pnpm --filter mobile setup-skia-web
+apps/mobile/public/canvaskit.wasm
