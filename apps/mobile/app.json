@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Deck",
+    "slug": "phone-deck",
+    "scheme": "phonedeck",
+    "version": "0.1.0",
+    "orientation": "landscape",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Deck listens while you hold the Redirect key, to turn your reply into text.",
+          "speechRecognitionPermission": "Deck turns your spoken reply into text on this phone."
+        }
+      ]
+    ]
+  }
+}

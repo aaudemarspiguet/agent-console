@@ -1,0 +1,10 @@
+{
+  "name": "phone-deck",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "mobile": "pnpm --filter mobile start",
+    "agent": "pnpm --filter agent start",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

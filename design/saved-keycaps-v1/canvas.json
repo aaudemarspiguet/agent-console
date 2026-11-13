@@ -1,0 +1,23 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-12T23:30:00Z"},
+  "title": "Phone Deck Mockups",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 844, "h": 390, "title": "Phone 1 · Deck", "radius": 44, "is_interactive": true},
+    "PhoneApproval.dc.html": {"x": 924, "y": 0, "w": 844, "h": 390, "title": "Phone 2 · Approval request", "radius": 44, "is_interactive": true},
+    "PhoneVoice.dc.html": {"x": 1848, "y": 0, "w": 844, "h": 390, "title": "Phone 3 · Voice reply", "radius": 44, "is_interactive": true},
+    "PhonePair.dc.html": {"x": 2772, "y": 0, "w": 844, "h": 390, "title": "Phone 4 · First-time pairing", "radius": 44},
+    "DesktopPhones.dc.html": {"x": 0, "y": 810, "w": 1280, "h": 800, "title": "Desktop 1 · Phones and pairing", "expand": "fill"},
+    "DesktopDeck.dc.html": {"x": 1360, "y": 810, "w": 1280, "h": 800, "title": "Desktop 2 · Deck editor", "expand": "fill"},
+    "DesktopAgents.dc.html": {"x": 2720, "y": 810, "w": 1280, "h": 800, "title": "Desktop 3 · Agents", "expand": "fill"},
+    "DesktopTray.dc.html": {"x": 4080, "y": 810, "w": 360, "h": 520, "title": "Desktop 4 · Tray flyout"}
+  },
+  "order": ["Main.dc.html", "PhoneApproval.dc.html", "PhoneVoice.dc.html", "PhonePair.dc.html", "DesktopPhones.dc.html", "DesktopDeck.dc.html", "DesktopAgents.dc.html", "DesktopTray.dc.html"],
+  "notes": {
+    "t-phone": {"x": 0, "y": -300, "text": "iPhone app, landscape", "kind": "title1", "maxW": 3616},
+    "t-desktop": {"x": 0, "y": 510, "text": "Windows tray agent", "kind": "title1", "maxW": 4440}
+  },
+  "designSystems": []
+}

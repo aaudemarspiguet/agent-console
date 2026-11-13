@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone deck and agent tiles</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+.glass{background:rgba(210,228,255,.09);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);border:1px solid rgba(220,235,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.38)}
+.mat{background:rgba(14,20,34,.74);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(220,235,255,.10)}
+@media (prefers-reduced-transparency: reduce){.glass,.mat{background:#1A2233;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div style="position: relative; width: 844px; height: 390px; overflow: hidden; background: #070B14; color: #F4F7FC; font-family: -apple-system, 'SF Pro Text', 'Segoe UI Variable', Inter, system-ui, sans-serif">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(60% 95% at 10% 108%, rgba(46,120,255,.46), transparent 70%), radial-gradient(50% 85% at 94% -12%, rgba(90,200,250,.22), transparent 70%), radial-gradient(42% 60% at 52% 48%, rgba(80,140,255,.10), transparent 72%)"></div>
+  <div style="position: absolute; inset: 0; box-sizing: border-box; padding: 16px 62px 21px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; align-items: stretch; gap: 8px; height: 66px">
+      <button class="mat" style="flex: 1 1 0; min-width: 0; border-radius: 20px; color: #F4F7FC; padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between; text-align: left">
+        <span style="display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 600"><img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 20px; height: 20px; border-radius: 5px; object-fit: contain">api-server</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6FB6FF">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+          Working
+        </span>
+      </button>
+      <button class="mat" style="flex: 1 1 0; min-width: 0; border-radius: 20px; color: #F4F7FC; padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between; text-align: left">
+        <span style="display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 600"><img src="/_blob/cdb4ae4ed7eaf4554a2d52b0ee82d3ba" alt="Codex" style="width: 20px; height: 20px; border-radius: 5px; object-fit: contain">web-app</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5EDC9A">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          Finished
+        </span>
+      </button>
+      <button class="mat" style="flex: 1 1 0; min-width: 0; border-radius: 20px; color: #F4F7FC; padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between; text-align: left">
+        <span style="display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 600"><img src="/_blob/48fc1865b1f7a5ae46167a5baec1e980" alt="Cursor" style="width: 20px; height: 20px; border-radius: 5px; object-fit: contain">docs-site</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(244,247,252,.72)">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6v12M15 6v12"/></svg>
+          Idle
+        </span>
+      </button>
+      <div class="glass" style="border-radius: 33px; padding: 0 8px; display: flex; align-items: stretch">
+        <button style="width: 72px; border: 0; background: transparent; color: #F4F7FC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 11px; font-weight: 500">
+          <img src="/_blob/2302c9264017031f2c2a5ad11e06949b" alt="" style="width: 32px; height: 32px; object-fit: contain">
+          Wispr Flow
+        </button>
+        <button style="width: 72px; border: 0; background: transparent; color: #F4F7FC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 11px; font-weight: 500">
+          <img src="/_blob/f3cb9ce796bddeaf95c7f5c74a381a1e" alt="" style="width: 30px; height: 30px; object-fit: contain">
+          Chrome
+        </button>
+        <button style="width: 72px; border: 0; background: transparent; color: #F4F7FC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 11px; font-weight: 500">
+          <img src="/_blob/fe20578dfd9d853582a777c6e6adbb59" alt="" style="width: 30px; height: 30px; object-fit: contain">
+          Terminal
+        </button>
+        <button style="width: 72px; border: 0; background: transparent; color: #F4F7FC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 11px; font-weight: 500">
+          <img src="/_blob/a87e69f05e961e97afb8b87525380e74" alt="" style="width: 30px; height: 30px; object-fit: contain">
+          Snip
+        </button>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: flex-end; padding-right: 128px; gap: 6px; height: 6px">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #F4F7FC"></span>
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: rgba(244,247,252,.35)"></span>
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: rgba(244,247,252,.35)"></span>
+    </div>
+    <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; color: rgba(244,247,252,.72)">Touchpad</div>
+    <div style="display: flex; gap: 10px">
+      <div class="glass" style="flex: 1 1 0; height: 54px; border-radius: 27px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: hidden">
+        <button style="border: 0; border-right: 1px solid rgba(220,235,255,.16); background: transparent; color: #F4F7FC; font-size: 15px; font-weight: 500">Left Click</button>
+        <button style="border: 0; background: transparent; color: #F4F7FC; font-size: 15px; font-weight: 500">Right Click</button>
+      </div>
+      <div class="glass" style="height: 54px; border-radius: 27px; padding: 0 6px; display: flex; align-items: center">
+        <button aria-label="Keyboard" style="width: 50px; height: 54px; border: 0; background: transparent; color: #F4F7FC; display: flex; align-items: center; justify-content: center">
+          <svg aria-hidden="true" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M7.5 14h9"/></svg>
+        </button>
+        <button aria-label="Escape" style="width: 50px; height: 54px; border: 0; background: transparent; color: #F4F7FC; font-size: 13px; font-weight: 500">Esc</button>
+        <button aria-label="Return" style="width: 50px; height: 54px; border: 0; background: transparent; color: #F4F7FC; display: flex; align-items: center; justify-content: center">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 6v6a3 3 0 0 1-3 3H5M9 11l-4 4 4 4"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

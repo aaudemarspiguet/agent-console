@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop agent: agents</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E10}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:rgba(235,235,245,.6);text-decoration:none}a:hover{color:#FFFFFF}
+.glass{background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(30px) saturate(1.5);backdrop-filter:blur(30px) saturate(1.5);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 12px 34px rgba(0,0,0,.4)}
+.mat{background:rgba(28,28,30,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09)}
+@media (prefers-reduced-transparency: reduce){.glass,.mat{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; padding: 12px; gap: 12px; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; font-size: 14px; display: flex; flex-wrap: wrap; background: #0E0E10">
+  <nav class="glass" style="flex: 1 1 210px; box-sizing: border-box; padding: 18px 12px; border-radius: 26px; display: flex; flex-direction: column; gap: 4px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 2px 10px 16px">
+      <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="{{accent}}"/></svg>
+      <span style="font-weight: 700; font-size: 17px">Deck</span>
+    </div>
+    <a href="DesktopPhones.dc.html" style="padding: 10px 12px; border-radius: 14px">Phones</a>
+    <a href="DesktopDeck.dc.html" style="padding: 10px 12px; border-radius: 14px">Deck</a>
+    <a href="DesktopAgents.dc.html" style="padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.14); color: #FFFFFF; font-weight: 600">Agents</a>
+    <div style="flex-grow: 1; min-height: 16px"></div>
+    <div style="padding: 8px 12px; font-size: 12px; line-height: 1.5; color: rgba(235,235,245,.6)">Running as a normal user<br>192.168.1.24 on local Wi-Fi</div>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px clamp(8px, 3vw, 40px); display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 960px">
+      <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.3px">Agents</h1>
+      <p style="margin: 0; color: rgba(235,235,245,.6)">Sessions from any connected agent show up on the phone as tiles. Commands are shown, never stored.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; max-width: 960px">
+      <section class="mat" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; padding: 22px; border-radius: 24px; display: flex; flex-direction: column; gap: 2px">
+        <h2 style="margin: 0 0 8px; font-size: 17px; font-weight: 600">Connected Agents</h2>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+          <img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain">
+          <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Claude Code</span><span style="font-size: 12px; color: #30D158">Connected</span></div>
+          <button style="height: 36px; padding: 0 16px; border-radius: 18px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 13px; font-weight: 500">Remove</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+          <img src="/_blob/cdb4ae4ed7eaf4554a2d52b0ee82d3ba" alt="" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain">
+          <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Codex</span><span style="font-size: 12px; color: #30D158">Connected</span></div>
+          <button style="height: 36px; padding: 0 16px; border-radius: 18px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 13px; font-weight: 500">Remove</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+          <img src="/_blob/48fc1865b1f7a5ae46167a5baec1e980" alt="" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain">
+          <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Cursor</span><span style="font-size: 12px; color: #30D158">Connected</span></div>
+          <button style="height: 36px; padding: 0 16px; border-radius: 18px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 13px; font-weight: 500">Remove</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0 0">
+          <img src="/_blob/59c30899253baf3d4871a721e8250440" alt="" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain">
+          <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Gemini</span><span style="font-size: 12px; color: rgba(235,235,245,.6)">Not connected</span></div>
+          <button style="height: 36px; padding: 0 16px; border-radius: 18px; border: 0; background: {{accent}}; color: #FFFFFF; font-size: 13px; font-weight: 600">Connect</button>
+        </div>
+      </section>
+      <section class="mat" style="flex: 2 1 380px; min-width: 0; box-sizing: border-box; padding: 22px; border-radius: 24px; display: flex; flex-direction: column; gap: 2px">
+        <h2 style="margin: 0 0 8px; font-size: 17px; font-weight: 600">Sessions Right Now</h2>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+          <img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain">
+          <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 15px; font-weight: 600">api-server</span>
+            <span style="font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: 12px; color: rgba(235,235,245,.6); overflow-wrap: anywhere">Bash: npm run db:migrate -- --env staging</span>
+          </div>
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #FF9F0A">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v9M12 18.5h.01"/></svg>
+            Needs Approval
+          </span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+          <img src="/_blob/cdb4ae4ed7eaf4554a2d52b0ee82d3ba" alt="Codex" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain">
+          <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">web-app</span><span style="font-size: 12px; color: rgba(235,235,245,.6)">Windows Terminal, tab 2</span></div>
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FFFFFF">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+            Working
+          </span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0 0">
+          <img src="/_blob/48fc1865b1f7a5ae46167a5baec1e980" alt="Cursor" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain">
+          <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">docs-site</span><span style="font-size: 12px; color: rgba(235,235,245,.6)">Cursor window</span></div>
+          <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(235,235,245,.6)">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6v12M15 6v12"/></svg>
+            Idle
+          </span>
+        </div>
+      </section>
+    </div>
+    <section style="max-width: 960px; box-sizing: border-box; padding: 20px 22px; border-radius: 24px; border: 1px dashed rgba(255,255,255,.28); display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px">
+      <div style="flex: 2 1 320px; display: flex; flex-direction: column; gap: 6px">
+        <h2 style="margin: 0; font-size: 17px; font-weight: 600">Other Machines Through HAPI <span style="font-size: 12px; font-weight: 400; color: rgba(235,235,245,.6)">Optional stretch goal</span></h2>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: rgba(235,235,245,.6)">Connect to a HAPI hub to see sessions that run on a dev box or another computer.</p>
+      </div>
+      <label style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: rgba(235,235,245,.6)">Hub address
+        <input type="text" value="http://127.0.0.1:3006" style="height: 40px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.16); color: #FFFFFF; font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-size: 13px">
+      </label>
+      <button style="height: 40px; padding: 0 20px; border-radius: 20px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 14px; font-weight: 500">Connect</button>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0A84FF","options":["#0A84FF","#FF9F0A","#30D158"]},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#0A84FF' };
+}
+}
+</script>
+</body>
+</html>

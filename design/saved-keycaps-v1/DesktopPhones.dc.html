@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop agent: phones and pairing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E10}
+button{font-family:inherit;cursor:pointer}
+a{color:rgba(235,235,245,.6);text-decoration:none}a:hover{color:#FFFFFF}
+.glass{background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(30px) saturate(1.5);backdrop-filter:blur(30px) saturate(1.5);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),0 12px 34px rgba(0,0,0,.4)}
+.mat{background:rgba(28,28,30,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09)}
+@media (prefers-reduced-transparency: reduce){.glass,.mat{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; padding: 12px; gap: 12px; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; font-size: 14px; display: flex; flex-wrap: wrap; background: #0E0E10">
+  <nav class="glass" style="flex: 1 1 210px; box-sizing: border-box; padding: 18px 12px; border-radius: 26px; display: flex; flex-direction: column; gap: 4px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 2px 10px 16px">
+      <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="{{accent}}"/></svg>
+      <span style="font-weight: 700; font-size: 17px">Deck</span>
+    </div>
+    <a href="DesktopPhones.dc.html" style="padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.14); color: #FFFFFF; font-weight: 600">Phones</a>
+    <a href="DesktopDeck.dc.html" style="padding: 10px 12px; border-radius: 14px">Deck</a>
+    <a href="DesktopAgents.dc.html" style="padding: 10px 12px; border-radius: 14px">Agents</a>
+    <div style="flex-grow: 1; min-height: 16px"></div>
+    <div style="padding: 8px 12px; font-size: 12px; line-height: 1.5; color: rgba(235,235,245,.6)">Running as a normal user<br>192.168.1.24 on local Wi-Fi</div>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px clamp(8px, 3vw, 40px); display: flex; flex-direction: column; gap: 22px">
+    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 920px">
+      <h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.3px">Phones</h1>
+      <p style="margin: 0; color: rgba(235,235,245,.6)">Only paired phones can control this PC. Traffic is encrypted with a key set at pairing.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; max-width: 920px">
+      <section class="mat" style="flex: 1 1 290px; box-sizing: border-box; padding: 22px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px">
+        <h2 style="margin: 0; align-self: flex-start; font-size: 17px; font-weight: 600">Pair a Phone</h2>
+        <div style="width: 216px; height: 216px; border-radius: 18px; background: #FFFFFF; color: #000000; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500">Pairing QR code</div>
+        <p style="margin: 0; font-size: 13px; color: rgba(235,235,245,.6); text-align: center">Scan with the phone app. The code expires after a short time.</p>
+        <button style="height: 40px; padding: 0 20px; border-radius: 20px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 14px; font-weight: 500">New Code</button>
+      </section>
+      <div style="flex: 2 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <section class="mat" style="padding: 22px; border-radius: 24px; display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0 0 8px; font-size: 17px; font-weight: 600">Paired Phones</h2>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.10)">
+            <div style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 15px; font-weight: 600">Amogh's iPhone</span>
+              <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #FFFFFF"><span style="width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF"></span>Connected now</span>
+            </div>
+            <button style="height: 40px; padding: 0 18px; border-radius: 20px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 14px; font-weight: 500">Revoke</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 0 0">
+            <div style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 15px; font-weight: 600">Old iPhone SE</span>
+              <span style="font-size: 13px; color: rgba(235,235,245,.6)">Last seen 12 days ago</span>
+            </div>
+            <button style="height: 40px; padding: 0 18px; border-radius: 20px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 14px; font-weight: 500">Revoke</button>
+          </div>
+        </section>
+        <section class="mat" style="padding: 22px; border-radius: 24px; display: flex; flex-direction: column; gap: 14px">
+          <h2 style="margin: 0; font-size: 17px; font-weight: 600">Startup and Privileges</h2>
+          <label style="display: flex; align-items: flex-start; gap: 12px">
+            <input type="checkbox" checked style="width: 20px; height: 20px; margin: 0; accent-color: {{accent}}">
+            <span>Start with Windows</span>
+          </label>
+          <label style="display: flex; align-items: flex-start; gap: 12px">
+            <input type="checkbox" style="width: 20px; height: 20px; margin: 0; accent-color: {{accent}}">
+            <span style="display: flex; flex-direction: column; gap: 4px">Run as administrator<span style="font-size: 13px; line-height: 1.45; color: rgba(235,235,245,.6)">Off by default. Turn on so launcher hotkeys reach administrator windows. Approvals work either way. The Windows UAC prompt and lock screen stay out of reach either way.</span></span>
+          </label>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0A84FF","options":["#0A84FF","#FF9F0A","#30D158"]},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#0A84FF' };
+}
+}
+</script>
+</body>
+</html>

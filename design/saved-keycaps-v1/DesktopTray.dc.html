@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop tray flyout</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+.sheet{background:rgba(44,44,46,.72);-webkit-backdrop-filter:blur(34px) saturate(1.6);backdrop-filter:blur(34px) saturate(1.6);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 18px 44px rgba(0,0,0,.5)}
+@media (prefers-reduced-transparency: reduce){.sheet{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div style="width: 360px; height: 520px; box-sizing: border-box; padding: 12px; background: #0E0E10; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; font-size: 14px">
+  <div class="sheet" style="height: 100%; box-sizing: border-box; padding: 18px; border-radius: 28px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="{{accent}}"/></svg>
+      <span style="font-weight: 700; font-size: 17px">Deck</span>
+      <div style="flex-grow: 1"></div>
+      <span style="font-size: 12px; color: rgba(235,235,245,.6)">Normal user</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 50%; background: #30D158"></span>Amogh's iPhone Connected</span>
+      <span style="font-size: 12px; color: rgba(235,235,245,.6); padding-left: 16px">Local Wi-Fi, encrypted</span>
+    </div>
+    <div style="height: 1px; background: rgba(255,255,255,.12)"></div>
+    <div style="display: flex; flex-direction: column; gap: 2px">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0">
+        <img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 26px; height: 26px; border-radius: 7px; object-fit: contain">
+        <span style="flex-grow: 1; font-weight: 600">api-server</span>
+        <span style="display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: #FF9F0A"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v9M12 18.5h.01"/></svg>Needs Approval</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0">
+        <img src="/_blob/cdb4ae4ed7eaf4554a2d52b0ee82d3ba" alt="Codex" style="width: 26px; height: 26px; border-radius: 7px; object-fit: contain">
+        <span style="flex-grow: 1; font-weight: 600">web-app</span>
+        <span style="font-size: 13px; color: #FFFFFF">Working</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 9px 0">
+        <img src="/_blob/48fc1865b1f7a5ae46167a5baec1e980" alt="Cursor" style="width: 26px; height: 26px; border-radius: 7px; object-fit: contain">
+        <span style="flex-grow: 1; font-weight: 600">docs-site</span>
+        <span style="font-size: 13px; color: rgba(235,235,245,.6)">Idle</span>
+      </div>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <button style="height: 44px; border-radius: 22px; border: 0; background: {{accent}}; color: #FFFFFF; font-size: 15px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,.4)">Pair a Phone</button>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <button style="height: 44px; border-radius: 22px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 15px; font-weight: 500">Settings</button>
+      <button style="height: 44px; border-radius: 22px; border: 0; background: rgba(255,255,255,.14); color: #FFFFFF; font-size: 15px; font-weight: 500">Quit</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0A84FF","options":["#0A84FF","#FF9F0A","#30D158"]},"$preview":{"width":360,"height":520}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#0A84FF' };
+}
+}
+</script>
+</body>
+</html>

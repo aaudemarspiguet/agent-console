@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone pairing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+.glass{background:rgba(255,255,255,.09);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);border:1px solid rgba(255,255,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.38)}
+@media (prefers-reduced-transparency: reduce){.glass{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+</style>
+</helmet>
+<div style="position: relative; width: 844px; height: 390px; overflow: hidden; background: linear-gradient(180deg, #151517, #0A0A0B); color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif">
+  <div style="position: absolute; inset: 0; box-sizing: border-box; padding: 24px 70px 28px; display: flex; align-items: center; gap: 44px">
+    <div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <svg role="img" aria-label="Deck" width="40" height="40" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="5" fill="{{accent}}"/></svg>
+      <h1 style="margin: 0; font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -0.4px">Pair With Your PC</h1>
+      <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 17px; line-height: 22px">
+        <li style="display: flex; gap: 12px; align-items: center"><span style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.14); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">1</span>Install the tray agent on Windows.</li>
+        <li style="display: flex; gap: 12px; align-items: center"><span style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.14); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">2</span>Open it and choose Pair a Phone.</li>
+        <li style="display: flex; gap: 12px; align-items: center"><span style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.14); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">3</span>Point this camera at the code.</li>
+      </ol>
+      <span style="font-size: 13px; line-height: 18px; color: rgba(235,235,245,.6)">Phone and PC must be on the same Wi-Fi. Nothing leaves your network.</span>
+    </div>
+    <div style="position: relative; width: 300px; height: 300px; border-radius: 36px; background: #000000; border: 1px solid rgba(255,255,255,.14); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px; box-sizing: border-box">
+      <span style="position: absolute; top: 34px; left: 34px; width: 46px; height: 46px; border-top: 4px solid #FFFFFF; border-left: 4px solid #FFFFFF; border-top-left-radius: 16px"></span>
+      <span style="position: absolute; top: 34px; right: 34px; width: 46px; height: 46px; border-top: 4px solid #FFFFFF; border-right: 4px solid #FFFFFF; border-top-right-radius: 16px"></span>
+      <span style="position: absolute; bottom: 78px; left: 34px; width: 46px; height: 46px; border-bottom: 4px solid #FFFFFF; border-left: 4px solid #FFFFFF; border-bottom-left-radius: 16px"></span>
+      <span style="position: absolute; bottom: 78px; right: 34px; width: 46px; height: 46px; border-bottom: 4px solid #FFFFFF; border-right: 4px solid #FFFFFF; border-bottom-right-radius: 16px"></span>
+      <span style="position: absolute; top: 118px; left: 0; right: 0; text-align: center; font-size: 13px; color: rgba(235,235,245,.6)">Camera view</span>
+      <div class="glass" style="height: 44px; padding: 0 18px; border-radius: 22px; display: flex; align-items: center; font-size: 15px; font-weight: 500">Looking for a Code</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0A84FF","options":["#0A84FF","#FF9F0A","#30D158"]},"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#0A84FF' };
+}
+}
+</script>
+</body>
+</html>

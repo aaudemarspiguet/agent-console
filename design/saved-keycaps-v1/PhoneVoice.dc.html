@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone voice reply</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.well{position:relative;display:flex;padding:4px 4px 10px;border-radius:22px;background:#040405;box-shadow:inset 0 2px 5px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.07)}
+.key{position:relative;flex:1 1 0;min-width:0;border-radius:18px;color:#fff;border:1px solid rgba(255,255,255,.17);background:linear-gradient(180deg,rgba(255,255,255,.17),rgba(255,255,255,.07));-webkit-backdrop-filter:blur(14px) saturate(1.7);backdrop-filter:blur(14px) saturate(1.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -8px 12px rgba(0,0,0,.22),0 6px 0 #1A1A1D,0 10px 14px rgba(0,0,0,.65);transition:transform .07s ease-out,box-shadow .07s ease-out}
+.key:active{transform:translateY(5px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -4px 8px rgba(0,0,0,.3),0 1px 0 #1A1A1D,0 2px 4px rgba(0,0,0,.6)}
+.key.tint{border-color:rgba(255,255,255,.28);background:linear-gradient(180deg,#3F9DFF,#0A84FF);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -8px 12px rgba(0,40,110,.3),0 6px 0 #0A4FA3,0 10px 14px rgba(0,0,0,.65)}
+.key.tint:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #0A4FA3,0 2px 4px rgba(0,0,0,.6)}
+.screen{background:#000;border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 2px 8px rgba(0,0,0,1),0 1px 0 rgba(255,255,255,.07)}
+@media (prefers-reduced-transparency: reduce){.key{background:#2C2C2E;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-reduced-motion: reduce){.key{transition:none}}
+</style>
+</helmet>
+<div style="width: 844px; height: 390px; box-sizing: border-box; padding: 16px 62px 21px; background: linear-gradient(180deg, #151517, #0A0A0B); color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 11px">
+  <div class="screen" style="flex-grow: 1; min-height: 0; box-sizing: border-box; padding: 18px 22px; border-radius: 20px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 26px; height: 26px; border-radius: 7px; object-fit: contain">
+      <span style="font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: -0.23px">Your Reply to api-server</span>
+      <span style="font-size: 13px; line-height: 18px; letter-spacing: -0.08px; color: rgba(235,235,245,.6)">Sent with Deny</span>
+      <div style="flex-grow: 1"></div>
+      <div aria-hidden="true" style="display: flex; align-items: center; gap: 3px; height: 26px">
+        <span style="width: 3px; height: 8px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 18px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 12px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 24px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 14px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 20px; border-radius: 2px; background: #FFFFFF"></span>
+        <span style="width: 3px; height: 7px; border-radius: 2px; background: #FFFFFF"></span>
+      </div>
+    </div>
+    <p style="margin: 0; flex-grow: 1; display: flex; align-items: center; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: 0.38px">Don't run that on production. Use the staging database and show me the plan first.</p>
+    <span style="font-size: 13px; line-height: 18px; letter-spacing: -0.08px; color: rgba(235,235,245,.6)">Transcribed on this iPhone. Nothing is sent until you press Deny and Send.</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 104px; gap: 10px">
+    <div class="well">
+      <button class="key" style="font-size: 20px; line-height: 25px; font-weight: 600; letter-spacing: -0.45px">Cancel</button>
+    </div>
+    <div class="well">
+      <button class="key" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>
+        <span style="font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: -0.23px">Record Again</span>
+      </button>
+    </div>
+    <div class="well">
+      <button class="key tint" style="font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.45px">Deny and Send</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":844,"height":390}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
