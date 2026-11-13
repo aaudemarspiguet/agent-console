@@ -42,6 +42,10 @@ The canvas is the artifact at https://claude.ai/artifact/13hkDcihBpCLtnBrE9AEk8.
 
 If a publish is refused because a file was not read first, read that file from the artifact and publish again. The canvas type's own rule is that a session does not open the render unless the user asks, so say plainly in the reply whether the render was viewed.
 
+## Comparing a board with the app
+
+`make-compare.ps1` writes every phone board as a plain page to `compare/` (ignored by git) and a page that shows one board above the running app. See T2 in `docs/HANDOFF.md`.
+
 ## Checking a board without the canvas
 
 The canvas needs a sign-in the built-in browser may not have. To check boards locally, copy each board's `<style>` block and the markup between `</helmet>` and `</x-dc>` into one plain HTML page and serve it from a local server. Agent icons will not load there; everything else renders.
