@@ -1,6 +1,6 @@
 # Product brief: phone deck for coding agents
 
-Version 8, 2026-11-13. Replaces version 7: the keys are drawn in Apple's Liquid Glass, "clear" style tinted 25% black (N-5), chosen from samples on the iPhone 17. Version 7: the deck has six number keys (K-10), two saved-reply keys (R-1 to R-5), and a five-by-four key grid that keeps keys square-ish (K-11). Version 6 made the effort wheel a requirement (E-1 to E-7), delivered by typing into the session's console, a route tested the same day. Version 5 moved the screen into an island beside the camera. Working title only; the final name must not contain "Claude".
+Version 9, 2026-11-13. Replaces version 8: sessions show six states, each with its own colour (A-3), and the deck's press feel, key sound and effort wheel feel are described (K-4, E-1). Version 8: the keys are drawn in Apple's Liquid Glass, "clear" style tinted 25% black (N-5), chosen from samples on the iPhone 17. Version 7: the deck has six number keys (K-10), two saved-reply keys (R-1 to R-5), and a five-by-four key grid that keeps keys square-ish (K-11). Version 6 made the effort wheel a requirement (E-1 to E-7), delivered by typing into the session's console, a route tested the same day. Version 5 moved the screen into an island beside the camera. Working title only; the final name must not contain "Claude".
 
 ## The idea
 
@@ -153,7 +153,7 @@ Device (replaces the launcher requirements D-1 to D-5, which are cut)
 - **K-1** The phone shows a set of keys and one island: a black area the app draws around the camera cutout. Everything that changes (sessions, requests, transcripts, results) appears only in the island.
 - **K-2** Each key does one action and carries a fixed legend: a word, with a small plain glyph on action keys, as on a Mac keyboard. No key shows an app icon or logo, and no key changes its legend or its place in the order during use. Keys do slide and change width together when the island opens or closes (K-7).
 - **K-3** A key that does nothing in the current state is unlit. Outside the island, only lights change.
-- **K-4** A press is confirmed with a haptic and a visible press movement. It should feel deep and heavy, like a glass key that goes down firmly and comes back slowly, not a light click (the user, 2026-11-13; handoff T6b). Chosen by feel on the phone from four variants (2026-11-13): a heavy haptic as the finger lands and a soft one as it lifts; the key goes down 3 points and springs back in about 0.7 seconds, rising slightly past rest once.
+- **K-4** A press is confirmed with a haptic and a visible press movement. It should feel deep and heavy, like a glass key that goes down firmly and comes back slowly, not a light click (the user, 2026-11-13; handoff T6b). Chosen by feel on the phone from four variants (2026-11-13): a heavy haptic as the finger lands and a soft one as it lifts; the key goes down 3 points and springs back in about 0.7 seconds, rising slightly past rest once. A press should also make a "creamy" sound: smooth, cushioned, deep and slightly thuddy (the user, 2026-11-13; handoff T11, not built). The sound is chosen by ear on the phone. It behaves exactly like the iPhone's own keyboard clicks: the same with the ringer on silent, with music playing in the background and at the same volume (the user, 2026-11-13). Whether there is also an in-app setting to turn it off is not decided.
 - **K-5** The island responds to touch: tap the closed island to open the session list, tap a row to open that session, tap an open island to close it, swipe to change the page of sessions, and scroll a long command. A request is never answered by touching the island; only keys answer.
 - **K-6** A layout mode on the phone lets the user choose which keys exist and where they sit, on a grid. Keys are added, removed, or reordered only in this mode. Allow and Deny cannot be removed. Redirect, Cancel, and Send form one group that is added and removed together. Number keys (K-10) and the saved-reply keys (R-1) are added and removed here. The mode opens with a touch and hold on the plate and closes with Done; a removed key can be put back from an Add a Key list. The island has a fixed size and is not part of the layout.
 - **K-7** Closed, the island is a small pill beside the camera showing one glyph and one count: sessions, or waiting requests in amber. It opens by itself for a request, while listening, and for a transcript, and it opens half-height for about two seconds to confirm a result (allowed, denied, sent, session started or finished). When it opens, the keys slide aside and narrow; when it closes, they return.
@@ -178,7 +178,18 @@ Phone
 
 - **A-1** One button on the PC installs Claude Code hooks beside any existing ones, backs up the settings file first, and removes them cleanly.
 - **A-2** Each running session appears automatically as a numbered row in the island's session list, labelled with its project folder. The deck does not start sessions; they are started on the PC. The list shows one row for each number key on the deck (six unless some are removed, K-10), and a swipe shows the next page.
-- **A-3** A row shows one of four states: working, needs approval, finished, idle. State is shown by colour, icon, and label. The number key for that row carries a light in the same colour.
+- **A-3** A row shows one of six states, each with its own colour (chosen by the user, 2026-11-13):
+
+  | State | Colour | Meaning, and the Claude Code hooks that show it |
+  |---|---|---|
+  | Thinking | blue `#64D2FF` | in a turn, not inside a tool: after UserPromptSubmit or a tool ends, until the next tool starts or the turn ends |
+  | Running | white `#FFFFFF` | inside a tool call: between PreToolUse and PostToolUse or PostToolUseFailure |
+  | Needs approval | amber `#FF9F0A` | a permission request is waiting (PermissionRequest); the same colour as the Request light |
+  | Finished | green `#30D158` | the turn ended (Stop) and the session has not been opened since |
+  | Error | red `#FF453A` | the turn ended on an API error (StopFailure) |
+  | Idle | unlit | finished and seen, or no turn running |
+
+  "Working", elsewhere in this brief, means thinking or running. State is shown by colour, icon and label in the row; the number key for that row carries a light in the same colour, and the label in the island means colour is never the only signal. These are Apple's system colours rather than pastels, so they stay clear through the tinted glass. Hooks give no event when a user interrupts a turn (Stop does not fire), so the PC agent must not leave a session showing Thinking or Running forever; how it detects this is open. Other agents map their own events onto these states through their adapters (A-9).
 - **A-4** A permission request opens the island by itself, showing the session, the tool, and the exact command. It is answered with the Allow, Always Allow (this session only), and Deny keys. When several requests wait, they are shown one at a time, oldest first, with a count. A request can be hidden with a tap; the answer keys work only while the request is showing, and the first press of one while it is hidden shows it again.
 - **A-5** The answer keys light up a short moment after a request appears, and a press before that is ignored, so you cannot approve something you have not read.
 - **A-6** If no answer arrives in time, the request falls back to the prompt in the terminal.
@@ -188,7 +199,7 @@ Phone
 - **A-9** Agent support sits behind an adapter so another agent can be added without changing the phone app.
 
 Effort wheel (Claude Code; depends on G0-5)
-- **E-1** Turning the wheel changes the reasoning effort of the selected session, one level for each step, with a haptic tick at each step and a firmer stop at each end. The levels are the ones that session's model offers (for example low, medium, high, xhigh, max).
+- **E-1** Turning the wheel changes the reasoning effort of the selected session, one level for each step, with a haptic tick at each step and a firmer stop at each end. It turns under the finger like a real wheel: it settles into a groove at each step, and past either end it resists and springs back (rubber banding). It looks like a textured cylinder in a recessed slot, not a flat drawing (the user, 2026-11-13; handoff T12, not built). The levels are the ones that session's model offers (for example low, medium, high, xhigh, max).
 - **E-2** While the wheel turns, the island opens half-height and shows the session, its current level, and the level chosen. It closes about two seconds after the result.
 - **E-3** The change is sent once, a short moment after the wheel stops, not once for each step.
 - **E-4** The change applies to that session only and does not alter the saved default on the PC. It takes effect on the next message; the island says so, and a turn in progress is not interrupted.

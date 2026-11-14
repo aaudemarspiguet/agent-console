@@ -150,6 +150,29 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Done when:** the user has picked one by feel on the phone, it is applied to every key, and K-4 in the brief says what was chosen. Haptics cannot be checked on the web; only the movement can.
 - **Order:** after T6, which restyles the cap the press moves; it can run before T6 if the user prefers.
 
+### T6c. A colour for each session state (done 2026-11-13, asked by the user)
+- **Choice:** six states, each with its own colour, agreed with the user (the brief's A-3 has the table and the hooks behind each state). The user pointed to another deck's coloured status keys as the idea; the colours here are Apple's system colours, not that deck's pastels.
+  - **Thinking** blue `#64D2FF`
+  - **Running** white
+  - **Needs approval** amber `#FF9F0A`
+  - **Finished** green `#30D158`
+  - **Error** red `#FF453A`
+  - **Idle** unlit
+- **From the hooks docs (code.claude.com/docs/en/hooks):**
+  - **Running** is the time between PreToolUse and PostToolUse or PostToolUseFailure.
+  - **Thinking** is the rest of a turn. No hook fires when the model starts or stops writing.
+  - **Needs approval:** PermissionRequest fires at once. The Notification hook with `permission_prompt` only fires after about 6 seconds.
+  - **Error:** StopFailure fires "when the turn ends due to an API error", in place of Stop.
+  - **Interrupts:** Stop does not fire when the user interrupts a turn, so the PC agent needs some other way to clear a stale Thinking or Running state. That way is open.
+- **Built:**
+  - **App:** `src/lights.ts` has the five lit states and their glow strengths. Blue (0.6) and red (0.8) were set by eye and are not yet checked on the phone. `DEMO_LIGHTS` gains `'states'`, which puts all six on keys 1 to 6. `'atRest'` now matches the redrawn boards.
+  - **Mockups:** `gen-island.ps1` changes key 4 to Thinking (blue) and key 5 to Error (red) on every board. The session list (Island2) shows rows for Running, Finished, Idle, Thinking and Error, with new icons for Thinking (three dots) and Error (a cross). All 17 boards were regenerated with no `@@` left, and the canvas was republished as version 47 after checking that the live files matched the last commit.
+- **Checked:**
+  - In the web view, the `'states'` demo shows all six states.
+  - Local copies of boards Island1 and Island2 were looked at.
+  - The type check passes.
+- **Not checked:** the colours through the glass on the phone, and the canvas render itself.
+
 ### T7. Decide legends and glyphs (needs the user)
 - **Open question:** on the smaller keys, legend and glyph together look crowded. The last recommendation was words only at 13 points on single-cell keys, and glyph plus word on wide keys. The user has not ruled.
 - **Done when:** the user has chosen, and the mockups, brief (K-2) and app agree.
@@ -166,6 +189,28 @@ Each task is sized to hand to one session. Do them in this order unless the user
 ### T10. First development build (needs the user)
 - **User does:** enrol in the Apple Developer Program, create an Expo account, and choose a bundle identifier (hard to change later).
 - **Then:** configure the cloud build, make a development build, and install it on the phone.
+
+### T11. Give the keys a "creamy" sound (asked by the user on 2026-11-13; later)
+- **Goal, in the user's words:** "Creamy: Smooth, cushioned, deep, and slightly thuddy acoustic signature." This is the sound that goes with the heavy press from T6b; the brief's K-4 records it.
+- **Do:**
+  - **Library:** from live documentation, find which Expo library plays short sounds with low enough delay to feel tied to the press (likely `expo-audio`), and whether it runs in Expo Go.
+  - **Behave like the iPhone's own keyboard clicks (decided by the user, 2026-11-13):** whatever iOS does with keyboard click sounds, the keys do the same. That covers the ringer or silent switch, music playing in the background (whether the click plays, and whether it ducks or stops the music) and the volume it plays at. First confirm from Apple's documentation and on the phone what the keyboard actually does; do not go by memory. Then set the audio session to match. Also check whether an app can follow the user's Keyboard Feedback sound setting, for example through Apple's input-click API (`UIDevice.playInputClick`), and whether Expo Go allows it.
+  - **Sounds:** find or record a few candidate sounds. They must be licensed for use in an app or made for it. Keep them short and quiet.
+  - **Try them:** play the sound on press, and perhaps a softer one on release, timed with the T6b haptics. Put a few candidates behind a temporary switch, as in T6b, so the user can choose by ear on the phone.
+- **Done when:** the user has picked one on the phone, it plays on every key, and K-4 says what was chosen. The web can play sound, but its timing and the phone speaker differ; judge on the phone.
+- **Open, for the user:** whether there should be an in-app setting to turn the sound off. The brief does not list one. If the keys can follow the iPhone's own Keyboard Feedback setting, that may answer it.
+
+### T12. Make the effort wheel turn, and look and feel physical (asked by the user on 2026-11-13; later)
+- **Goal, in the user's words:** the wheel "needs to become functional with haptic feedback and some rubber banding and groove. and more physical texture in its look. rn it looks like a 2d flat image." Today `EffortWheel` in `PlateParts.tsx` is a static drawing: a slot, 32 flat ridges and a shading gradient, with no gesture.
+- **Scope:** this task covers the phone side only: the gesture, the feel and the look (E-1 and K-9). Sending the change to the PC (E-3 to E-7) needs the connection (T8). The half-height island (E-2) belongs with the island's open states. Until then, the wheel can turn through a demo session's levels (low, medium, high, xhigh, max) behind a temporary switch. With nothing connected it stays unlit and does nothing (E-6).
+- **Do:**
+  - **Gesture:** a vertical drag on the wheel turns it. The ridges move with the finger, so it reads as a cylinder rolling, not a slider.
+  - **Steps, the "groove":** one detent per level. The wheel snaps into the nearest step on release, with a haptic tick each time it passes a step (E-1).
+  - **Ends, the "rubber banding":** past the first or last level the wheel keeps moving but resists more the further it goes, then springs back on release. A firmer haptic marks the end stop (E-1).
+  - **Look:** make the wheel read as a rounded cylinder in a recessed slot, not a flat image. Ridges should get closer together and darker towards the top and bottom edges, as on a real curved surface. Add a highlight along the curve, a shadowed slot with depth, and fine knurling texture. Compare with the mockups' `.wcyl` and `.wslot` and improve on them; the user finds the current drawing flat.
+  - **Libraries:** check the live docs for the installed versions of `react-native-gesture-handler` and Reanimated (both are thought to be in Expo Go), or use React Native's own `PanResponder` and `Animated`. Use T6b's haptic findings: five fixed impact styles, so the tick is likely Light or a selection haptic, and the end stop Rigid or Heavy.
+  - **Try them:** build a few feels (detent strength, resistance, tick style) behind a temporary switch, and let the user choose by feel on the phone.
+- **Done when:** the user has turned it on the phone and confirmed the feel and the look, and E-1 and K-9 in the brief say what was chosen. The web view can show the look and the movement, but not the haptics.
 
 ### Later, from the brief
 The island's open states (session list, request, transcript, results), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order once T1 to T8 are done.

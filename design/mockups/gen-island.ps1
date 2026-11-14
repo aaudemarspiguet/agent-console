@@ -11,6 +11,9 @@ function ReplyKey($k, $name, $legend) {
   return '      <div class="well@@W_' + $k + '@@">' + "`n" + '        <button class="key solid@@C_' + $k + '@@" aria-label="Saved reply: ' + $name + '"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">' + $legend + '</span></button>' + "`n" + '      </div>' + "`n"
 }
 $gWhite = 'background: #FFFFFF; opacity: .32'; $dWhite = 'background: #FFFFFF; box-shadow: 0 0 7px #FFFFFF'; $dIdle = 'background: #48484A'
+# brief A-3: thinking is blue, an error is red
+$gBlue = 'background: #64D2FF; opacity: .6'; $dBlue = 'background: #64D2FF; box-shadow: 0 0 7px #64D2FF'
+$gRed = 'background: #FF453A'; $dRed = 'background: #FF453A; box-shadow: 0 0 7px #FF453A'
 $wDeny = @'
       <div class="well@@W_deny@@" style="grid-column: span 2">
         <button class="key solid@@C_deny@@"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="leg l">deny</span></button>
@@ -43,8 +46,8 @@ $gridTpl = '<div class="g4" style="flex-grow: 1; min-height: 0; display: grid; g
   (NumKey 'k1' 1 '@@K1GLOW@@' '@@K1DOT@@') +
   (NumKey 'k2' 2 'background: #30D158' 'background: #30D158; box-shadow: 0 0 7px #30D158') +
   (NumKey 'k3' 3 '' $dIdle) + $wDeny + "`n" +
-  (NumKey 'k4' 4 $gWhite $dWhite) +
-  (NumKey 'k5' 5 '' $dIdle) +
+  (NumKey 'k4' 4 $gBlue $dBlue) +
+  (NumKey 'k5' 5 $gRed $dRed) +
   (NumKey 'k6' 6 $gWhite $dWhite) + $wAllow + "`n" +
   (ReplyKey 'rep1' 'run tests' 'run<br>tests') + (ReplyKey 'rep2' 'explain' 'explain') + $wAlways + "`n" + $wVoice
 $keys = $keys + 'k5','k6','rep1','rep2'
@@ -162,7 +165,7 @@ $stripEdit = @'
 '@
 
 function Svg($d, $sz, $color, $sw) { return '<svg aria-hidden="true" width="' + $sz + '" height="' + $sz + '" viewBox="0 0 24 24" fill="none" stroke="' + $color + '" stroke-width="' + $sw + '" stroke-linecap="round" stroke-linejoin="round"><path d="' + $d + '"/></svg>' }
-$pArc = 'M12 3a9 9 0 1 0 9 9'; $pCheck = 'M5 12.5l4.5 4.5L19 7.5'; $pBang = 'M12 5v9M12 18.5h.01'; $pUp = 'M12 20V5M5 12l7-7 7 7'; $pPause = 'M9 6v12M15 6v12'
+$pArc = 'M12 3a9 9 0 1 0 9 9'; $pCheck = 'M5 12.5l4.5 4.5L19 7.5'; $pBang = 'M12 5v9M12 18.5h.01'; $pUp = 'M12 20V5M5 12l7-7 7 7'; $pPause = 'M9 6v12M15 6v12'; $pDots = 'M6 12h.01M12 12h.01M18 12h.01'; $pCross = 'M7 7l10 10M17 7L7 17'
 
 function Shut($top, $bottom, $tall) {
   $g = if ($tall) { 'top: 119px; height: 164px' } else { 'top: 139px; height: 125px' }
@@ -180,7 +183,7 @@ function Head1($status, $color, $icon) {
 "@
 }
 $headReq = Head1 'Needs Approval' '#FF9F0A' (Svg $pBang 18 '#FF9F0A' 2.6)
-$headWork = Head1 'Working' $grey (Svg $pArc 16 '#FFFFFF' 2.4)
+$headWork = Head1 'Running' $grey (Svg $pArc 16 '#FFFFFF' 2.4)
 
 function IRow($n, $blob, $agent, $name, $status, $color, $icon) {
   return @"
@@ -188,12 +191,12 @@ function IRow($n, $blob, $agent, $name, $status, $color, $icon) {
 "@
 }
 $vList = '    <div class="xv six">' + "`n" + '      <span class="big" style="padding: 0 8px 6px">Agents</span>' + "`n" +
-  (IRow 1 $blobCC 'Claude Code' 'api-server' 'Working' $grey (Svg $pArc 16 '#FFFFFF' 2.4)) +
+  (IRow 1 $blobCC 'Claude Code' 'api-server' 'Running' $grey (Svg $pArc 16 '#FFFFFF' 2.4)) +
   (IRow 2 'cdb4ae4ed7eaf4554a2d52b0ee82d3ba' 'Codex' 'web-app' 'Finished' '#30D158' (Svg $pCheck 16 '#30D158' 2.8)) +
   (IRow 3 '48fc1865b1f7a5ae46167a5baec1e980' 'Cursor' 'docs-site' 'Idle' $grey (Svg $pPause 16 $grey 2.4)) +
-  (IRow 4 '59c30899253baf3d4871a721e8250440' 'Gemini' 'infra' 'Working' $grey (Svg $pArc 16 '#FFFFFF' 2.4)) +
-  (IRow 5 $blobCC 'Claude Code' 'mobile-app' 'Idle' $grey (Svg $pPause 16 $grey 2.4)) +
-  (IRow 6 'cdb4ae4ed7eaf4554a2d52b0ee82d3ba' 'Codex' 'data-jobs' 'Working' $grey (Svg $pArc 16 '#FFFFFF' 2.4)) + @'
+  (IRow 4 '59c30899253baf3d4871a721e8250440' 'Gemini' 'infra' 'Thinking' '#64D2FF' (Svg $pDots 16 '#64D2FF' 3)) +
+  (IRow 5 $blobCC 'Claude Code' 'mobile-app' 'Error' '#FF453A' (Svg $pCross 16 '#FF453A' 2.6)) +
+  (IRow 6 'cdb4ae4ed7eaf4554a2d52b0ee82d3ba' 'Codex' 'data-jobs' 'Running' $grey (Svg $pArc 16 '#FFFFFF' 2.4)) + @'
       <div style="flex-grow: 1"></div>
       <div class="foot" style="padding: 0 4px"><span>AMOGH-PC on Wi-Fi</span><span style="flex-grow: 1"></span><span role="img" aria-label="Page 1 of 2, swipe to change" style="display: flex; gap: 5px"><span class="pd" style="background: #FFFFFF"></span><span class="pd"></span></span></div>
     </div>
