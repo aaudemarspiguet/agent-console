@@ -299,8 +299,136 @@ Each task is sized to hand to one session. Do them in this order unless the user
   - **Try them:** build a few feels (detent strength, resistance, tick style) behind a temporary switch, and let the user choose by feel on the phone.
 - **Done when:** the user has turned it on the phone and confirmed the feel and the look, and E-1 and K-9 in the brief say what was chosen. The web view can show the look and the movement, but not the haptics.
 
+### T13. Open the island: every state in the mockups, moving as the prototype does (planned 2026-11-13, asked by the user)
+- **Goal, in the user's words:** plan the island "according exactly to the prototype and mockup". Today the app draws only the closed pill (`IslandPill` in `PlateParts.tsx`), with nothing in it, and it never opens.
+- **Sources, and which one wins:**
+  - **The mockups** (`design/mockups/gen-island.ps1`, boards `Island1` to `Island9`, `Effort1` to `Effort3`, `Reply1` and `Reply2`) are newer and drawn at the iPhone 17's measured size. **They decide the geometry, the content, the text and the colours of every state they show.** The numbers below are copied from the generator.
+  - **The prototype** (https://claude.ai/artifact/AXbJJjbCaffPhaM8E1Zdy3, "Island Deck") is older. It has four number keys, a 844 by 390 screen, a 38 by 140 pill and a 366-point open island. **It decides only what the mockups cannot show:** motion, timing, what each touch and key does, and states the boards leave out.
+  - **The brief** (K-1, K-3, K-5, K-7, K-8, A-2 to A-8, A-14, E-2, V-2 to V-4, R-2, R-3) wins over both where they differ. Each difference is listed under "Open, for the user" below rather than settled quietly.
+- **Scope:** the phone side only, run by a demo data source behind a temporary switch, like the demo lights (`lights.ts`, T6). Wiring the island to the PC link (T8) is the next task (A-1 to A-3, Release 2). Not here: layout mode (`IslandLayout1` and `2`, K-6), pairing (`IslandPair`), and the wheel's gesture (T12). The half-height effort view (E-2) is built here, so T12 can open it.
+- **Geometry (mockups):** island colour `#000`, 14 points from the camera edge.
+  - **Closed pill:** 37 by 125, top 139, corner radius 18.5, outline `0 0 0 1px rgba(255,255,255,.035)`. Glyph at the top and count at the bottom, 15 points in from each end.
+  - **Closed, with a request hidden (A-8):** 37 by 164, top 119.
+  - **Open, full height:** 320 by 378, top 12, radius 38, shadow `0 0 0 1px rgba(255,255,255,.07), 0 18px 44px rgba(0,0,0,.6)`.
+  - **Open, half height** (results and effort): 320 by 170, top 116, radius 36.
+  - **Keys:** the key area starts 62 points from the camera edge when closed, and 348 when open at either height. The keys narrow to fit (K-7, K-11).
+  - **Right-handed (K-8):** mirror the island to whichever side the camera is on (`useCameraSide`). That includes the content padding that keeps text clear of the cutout. The mockups show only the left.
+- **Motion (prototype):**
+  - **Island and keys:** left, top, width, height, corner radius, and the key area's left edge all move together over 0.52 s on `cubic-bezier(.32, 1.28, .45, 1)`, which overshoots slightly.
+  - **Pill content:** fades out over 0.08 s on opening, and back in over 0.2 s after a 0.16 s delay on closing.
+  - **Open content:** fades in over 0.26 s after 0.15 s. Switching between open views fades out over 0.1 s, then draws the new view after 110 ms.
+  - **Loops:** the amber request dot pulses every 1.1 s, to 45% opacity and 80% size. The red listening dot pulses every 0.9 s. The working glyph spins once a second. The transcript caret blinks.
+  - **Nudge:** pressing an unlit key shakes the island: 3 points out, 2 back, over 0.32 s.
+  - **Reduce Motion:** all of these become near-instant, and the loops stop.
+  - **Check first** whether React Native's `Animated` can move layout properties at 60 fps on the phone. The native driver cannot animate width, height or left. Reanimated is not installed. Moving the key area also changes every key's width, so measure that on the phone.
+- **Text and parts (mockups):**
+  - **Content padding:** open views 16, 16, 14 and 54 points (54 on the camera side). Half-height results 0, 18, 0 and 56, with a gap of 12.
+  - **Type:**
+    - title: 17/22, weight 600, letter spacing -0.43
+    - subtitle: 13/18, spacing -0.08, `rgba(235,235,245,.6)`, padding 12, 4, 8
+    - status line: 12/16 muted
+    - row name: 15/20, weight 500
+    - footer: 12/16 muted, padding 10, 4, 0 (the prototype's values)
+  - **Content box:** `#1C1C1E`, radius 12, padding 12. Code inside it: monospace 13/20. Spoken text: 17/23.
+  - **Session header:** number, agent icon (28, radius 7), project name as the title, status in its colour (A-3), status glyph on the right.
+  - **Result badge:** a 42-point circle, tinted at 18% of the result's colour, with a 20-point glyph at stroke 2.6.
+- **States to build, each matched to its board:**
+  1. **At rest** (`Island1`): the pill shows a white spinning arc and the session count ("6").
+  2. **Session list** (`Island2`), opened by tapping the pill:
+     - title "Agents", then one 44-point row per number key on the deck (A-2): number, icon (26), project name, status in its colour, status glyph
+     - footer "AMOGH-PC on Wi-Fi", with page dots on the right (6 points; white for the current page)
+     - a swipe changes the page (K-5)
+  3. **Request** (`Island3`), which opens by itself (A-4):
+     - header status "Needs Approval" in amber `#FF9F0A`, with a "!" glyph
+     - subtitle "Wants to run a command with Bash", the command in the code box (it scrolls if long, K-5)
+     - footer "Request 1 of N" on the left and "Tap to hide" on the right
+     - number key 1 glows amber and the Request light comes on (A-8)
+     - Allow, Always Allow and Deny light, after a short delay (A-5)
+  4. **Allowed** (`Island4`), half height: green check, "Allowed", "api-server is running it now".
+  5. **Listening** (`Island5`), while Redirect is held:
+     - subtitle "Listening" in red `#FF453A`, after an 8-point red dot
+     - the words in muted text as they arrive
+     - footer "Let go of the key when you finish."
+  6. **Transcript** (`Island6`):
+     - subtitle "Your Reply", with the text in white
+     - footer "Send denies the request and gives Claude Code this reply."
+     - Send and Cancel light (V-2)
+     - when there is no request (V-4): subtitle "Your Follow-Up", footer "Send queues this for api-server."
+  7. **Session finished** (`Island7`), half height: green check, "api-server finished", "Its turn has ended." Key 1 turns green.
+  8. **Session view** (`Island8`), when a number key or row is pressed (A-7):
+     - header status "Running" with the spinning arc
+     - subtitle "Claude Code on AMOGH-PC. Recent tool calls:"
+     - the last three tool calls in the code box, 6 points apart, in `rgba(235,235,245,.78)` (A-14)
+     - footer "Hold redirect to queue a follow-up."
+     - the effort wheel's light comes on (E-6)
+  9. **Request hidden** (`Island9`): the tall pill shows the pulsing amber dot and the count in amber. The answer keys go dark.
+  10. **Effort** (`Effort1`), half height:
+      - the session header
+      - five segments with the labels low, medium, high, xhigh and max; segments up to the chosen level are white, the chosen label is white and bold
+      - footer "Effort was high. Keep turning or stop."
+  11. **Effort results** (`Effort2`, `Effort3`), half height:
+      - "Effort: xhigh", "api-server, from its next message", with a green check
+      - "Not changed", "api-server is still on high", with an amber "!"
+  12. **Saved reply** (`Reply1`, `Reply2`, R-2):
+      - subtitle "Saved Reply", the text as spoken text, footer "Send queues this for the end of the turn."
+      - then, half height, "Follow-up queued", "api-server gets it when its turn ends"
+  13. **States only in the prototype, all half height:**
+      - "Always allowed": two checks, green
+      - "Denied", "api-server will try another way": red cross, tint `rgba(255,69,58,.18)`
+      - "Reply sent", "Denied, and api-server has your reply": blue up arrow, `#409CFF` on `rgba(10,132,255,.2)`
+      - "Thrown away": neutral undo, with "The request is still waiting for you." or "Nothing was sent."
+      - "<project> started": shows the agent's icon at 40 points
+      - hints: "Key N is free", "Pick a session first", "<project> is not working", "Hold to talk"
+- **Behaviour (prototype, checked against the brief):**
+  - **Tapping the closed pill:** does nothing while listening. Otherwise it opens the transcript if one is waiting, then the request if one is waiting, and if neither, the session list.
+  - **Tapping the open island:** a row selects that session (A-7). During listening or a transcript, a tap does nothing. Otherwise the island closes, and a request it was showing becomes hidden (A-4). A tap on the plate outside the keys also closes the list or a session view. A request is never answered by touch (K-5).
+  - **Number key:**
+    - **Empty key:** the hint "Key N is free" (2.2 s).
+    - **Pressed again while its session is open:** deselects it and closes the island.
+    - **Otherwise:** selects that session. If it has a request, the request moves to the front and opens; if not, the session view opens. During listening or a transcript, the key only selects.
+  - **Answer keys:** they work only while a request is showing.
+    - **Unlit with a request hidden:** the first press shows the request (A-4).
+    - **Unlit with no request:** the press only nudges the island.
+    - **Lit:** a press shows its result for 1.5 s, then moves on.
+  - **What follows a result:** a waiting transcript, then the next request, then closing.
+  - **Redirect:**
+    - **Hold:** replies to the request if one is showing, or if nothing else is selected (V-3). Otherwise it queues a follow-up for the selected working session (V-4).
+    - **Selected session not working:** the hint "<project> is not working" (3 s).
+    - **Nothing to reply to:** the hint "Pick a session first" (2.5 s).
+    - **Released within 0.45 s:** the hint "Hold to talk" (1.9 s).
+    - **Released after that:** opens the transcript.
+  - **Send:** "Reply sent" or "Follow-up queued", shown for 1.7 s.
+  - **Cancel:** "Thrown away", shown for 1.3 s.
+  - **A new request while busy:** if a request is already showing, or the user is talking or has a transcript open, the new one only joins the queue and the count goes up. Otherwise it opens the island.
+  - **"Started" and "finished" events:** shown for 2.5 s when nothing more important is open. Otherwise only the lights change (K-3).
+- **Demo source (temporary):** a script of fake sessions and events matching the boards' data:
+  - **The sessions:**
+
+    | Key | Project | Agent | State |
+    |---|---|---|---|
+    | 1 | api-server | Claude Code | Running |
+    | 2 | web-app | Codex | Finished |
+    | 3 | docs-site | Cursor | Idle |
+    | 4 | infra | Gemini | Thinking |
+    | 5 | mobile-app | Claude Code | Error |
+    | 6 | data-jobs | Codex | Running |
+
+  - **The request:** `npm run db:migrate -- --env production`
+  - **The transcripts:** "Use the staging database instead." and the saved reply "Run the tests and fix any failures."
+  - **Making events happen:** a hidden trigger, for example a long press on the Link light, sends the next request or a "finished" event, so every state can be reached on the phone.
+- **Check:** compare each state with its board side by side using `make-compare.ps1` (T2), then on the phone. CLAUDE.md applies: do not say it matches without looking.
+- **Done when:** every state above can be reached on the phone, each matches its board, the motion matches the prototype, and the user has confirmed it on the phone.
+- **Open, for the user, before or during the work:**
+  - **Agent icons:** the mockups use the agents' real logos (Claude Code, Codex, Cursor, Gemini) in the island rows; the prototype uses lettered tiles. K-2 forbids icons on keys only. Whether the app may ship the real logos is a trademark question.
+  - **Empty number keys:** the list's look for a key with no session is only in the prototype: a dashed placeholder, "No session" and "Start an agent on your PC". The list title also differs: the prototype adds "N of 4 keys"; the mockup has "Agents" alone.
+  - **Answer-key delay (A-5):** neither source has the delay or a length. Suggest 0.5 to 1 s.
+  - **Result times:** K-7 says about two seconds; the prototype uses 1.3 to 2.5 s by kind. The plan follows the prototype.
+  - **The white outline on a pressed key or the wheel** is how the mockups mark the control in use; it is not app UI. The prototype instead outlines the selected number key at 55% white. K-3 says only lights change outside the island, so the outline is left out unless the user wants it.
+  - **The prototype's "Keys make room" switch:** dropped. K-7 says the keys always slide aside.
+  - **Pill glyphs for listening, a waiting transcript and layout mode:** the prototype has them (a red dot with level bars, a blue arrow with "1", and a grid). K-7 allows only a session or request count, and the island is open in those states anyway, so they are left out.
+
 ### Later, from the brief
-The island's open states (session list, request, transcript, results), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order now that T1 to T8 are done.
+Wiring the deck and island to the PC link (A-1 to A-3), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order now that T1 to T8 are done.
 
 ## Open decisions
 
