@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "linkcheck": "tsx src/linkcheck.ts"
   },
   "dependencies": {
-    "@deck/protocol": "workspace:*"
+    "@deck/protocol": "workspace:*",
+    "qrcode-terminal": "0.12.0",
+    "ws": "8.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/ws": "8.18.2",
     "tsx": "^4.0.0",
     "typescript": "~6.0.3"
   }

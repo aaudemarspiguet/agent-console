@@ -1,6 +1,6 @@
 # Handoff: state of the project on 2026-11-13
 
-Read this with [product-brief.md](../product-brief.md) (version 8), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
+Read this with [product-brief.md](../product-brief.md) (version 12), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
 
 ## What the product is
 
@@ -10,14 +10,15 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 | Path | What it is | State |
 |---|---|---|
-| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 8) |
+| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 12) |
 | `competitor-research.md` | Earlier research on similar products | Reference |
 | `apps/mobile` | The phone app: Expo SDK 58, React Native 0.88, TypeScript | Runs in Expo Go; one screen; does not match the design yet |
-| `apps/agent` | The PC side: a Node script | Stub. Prints protocol version and network addresses |
-| `packages/protocol` | Types shared by phone and PC | Version constant and key ids only |
+| `apps/agent` | The PC side: a Node script | Gate 0 spike: QR pairing, encrypted WebSocket link, Claude Code hook endpoints (T8) |
+| `packages/protocol` | Code shared by phone and PC | Message shapes and the encrypted channel (T8) |
 | `design/mockups` | The design boards (HTML) and the scripts that generate them | Current design, drawn at the wrong phone size |
 | `design/saved-keycaps-v1` | An older design, kept for reference | Superseded |
 | `spike/console-typing` | Scripts that proved the effort-wheel route | Working test scripts, not product code |
+| `spike/connection` | Notes and a playground project for the connection spike | T8; the code itself is in `apps/` and `packages/` |
 
 ## Decisions already made (do not reopen without the user)
 
@@ -186,10 +187,41 @@ Each task is sized to hand to one session. Do them in this order unless the user
   - **Hints:** Redirect keeps "hold to talk" in the opposite corner. Always Allow loses "session"; its spoken label still says it.
 - **Where:** `glyph` and `hint` in `src/layout.ts`, drawn by `src/Glyph.tsx` with `react-native-svg` 15.16.0 (in Expo Go, per the SDK 58 docs). Glyph, hint and legend share one ink and dim together when the key is unlit. Mockups: the glyphs on single-cell keys and the 11-point override for the four-row grid were removed from `gen-island.ps1` and `gen-flow.ps1`, and every phone board was regenerated. Brief K-2 updated (version 10).
 
-### T8. Gate 0 spike: the connection
-- **Do:** G0-1 to G0-3 in the brief. The phone pairs with `apps/agent` over the local network and exchanges encrypted messages; one Claude Code permission request reaches the phone through a hook and an Allow or Deny goes back. Put message shapes in `packages/protocol`.
-- **Done when:** the three gate items are demonstrated and their results are written into the brief's feasibility section.
-- **Independent of T1 to T7**, so it can run in parallel in its own session.
+### T8. Gate 0 spike: the connection (done 2026-11-13)
+- **Built:**
+  - **Agent** (`apps/agent`, `pnpm agent`): a QR code to pair, an encrypted WebSocket link on port 8765, and Claude Code hook endpoints on 127.0.0.1:8766.
+  - **Protocol** (`packages/protocol`): the message shapes and the encrypted channel.
+  - **Phone:** a plain test screen (`apps/mobile/src/link`). Shown when `SCREEN` in `App.tsx` is `'link'`.
+  - **New libraries:**
+    - phone: `expo-camera` ~58.0.14 and `expo-crypto` ~58.0.8, both in Expo Go per the SDK 58 docs;
+    - protocol: `@noble/ciphers` and `@noble/hashes` 2.4.0, pure JavaScript;
+    - agent: `ws` 8.23.0 and `qrcode-terminal` 0.12.0.
+  - **Design:** `spike/connection/README.md`.
+- **From live docs:**
+  - **Claude Code hooks page:**
+    - `type: "http"` hooks POST the event's JSON. The default timeout is 600 s.
+    - A connection failure, a non-2xx reply or a timeout is a non-blocking error unless `onFailure: "block"` is set.
+    - PermissionRequest answers with `hookSpecificOutput.decision`: `behavior` allow or deny, plus `message` or `interrupt` on a deny and `updatedPermissions` on an allow.
+  - **Expo SDK 58 docs:**
+    - `expo-crypto` has random bytes, digests and AES-GCM, but no key exchange.
+    - React Native has no global WebCrypto, hence the noble libraries.
+- **Tested (details in the brief, "Tested on this PC: the connection"):**
+  - The web build stood in for the phone.
+  - Real headless Claude Code sessions in `spike/connection/playground` sent the requests.
+  - These worked:
+    - pairing and the encrypted link;
+    - refusing a wrong key, a replayed frame and the wrong PC;
+    - reconnecting after the agent restarted;
+    - Allow, and Deny with a message that changed what Claude did next;
+    - a queued follow-up through the Stop hook (`additionalContext` is used, because `decision: "block"` is labelled an error);
+    - a timeout, which is denied when headless.
+  - The type check passes.
+- **Done with the user on the iPhone 17 (Expo Go):** the phone linked over Wi-Fi. In an interactive terminal session, Allow from the phone ran the command ("Allowed by PermissionRequest hook"), and a queued follow-up arrived as "Stop hook feedback". A 60-second timeout cleared the phone and the request fell back to the terminal, where the user approved it. Neither Windows Firewall nor iOS asked for permission on the first link. The terminal's own prompt shows at the same time as the phone, so either can answer first.
+- **Found and fixed with the user:** answering in the terminal first did not clear the phone, because Claude Code keeps the hook open until its timeout. The agent now clears it on the session's later hooks (`/hooks/event`); the user confirmed on the phone that it clears.
+- **No phone linked:** with the app closed, the agent returned no decision and the terminal asked at once (confirmed by the user).
+- **Open, for the user:** whether to try a channel (research preview) beside or instead of the hooks: it can push messages mid-turn, which hooks cannot. See the brief's connection results.
+- **After:** `SCREEN` in `App.tsx` is back on `'deck'`; set it to `'link'` to use the test screen again. The deck's keys are not wired to the link yet; that belongs with Release 2 (A-1 to A-3).
+- **Done when:** the three gate items are demonstrated on the phone and their results are written into the brief's feasibility section.
 
 ### T9. Finish the effort-wheel tests (needs the user at the PC)
 - **Do:** the items still open under G0-5: an elevated terminal (needs a UAC prompt answered), the user typing at the same moment, how the PC agent finds a session's process from its hooks, whether a hook reports the current effort level, and whether the prompt box's stash state can be told before Ctrl+S is sent.
@@ -222,7 +254,7 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Done when:** the user has turned it on the phone and confirmed the feel and the look, and E-1 and K-9 in the brief say what was chosen. The web view can show the look and the movement, but not the haptics.
 
 ### Later, from the brief
-The island's open states (session list, request, transcript, results), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order once T1 to T8 are done.
+The island's open states (session list, request, transcript, results), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order now that T1 to T8 are done.
 
 ## Open decisions
 

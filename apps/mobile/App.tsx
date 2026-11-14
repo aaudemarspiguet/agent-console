@@ -5,13 +5,15 @@ import { PROTOCOL_VERSION } from '@deck/protocol';
 import { Deck } from './src/Deck';
 import { Measure } from './src/Measure';
 import { Materials } from './src/materials/Materials';
+import { LinkSpike } from './src/link/LinkSpike';
 
 /**
  * Which screen to show. 'deck' is the app. 'measure' is the measuring screen from
  * handoff task T1, for measuring another phone. 'materials' is the key
- * material samples from T5, kept as a record (src/materials/README.md).
+ * material samples from T5, kept as a record (src/materials/README.md). 'link' is
+ * the connection test screen from T8 (src/link/LinkSpike.tsx).
  */
-const SCREEN = 'deck' as 'deck' | 'measure' | 'materials';
+const SCREEN = 'deck' as 'deck' | 'measure' | 'materials' | 'link';
 
 export default function App() {
   // The screen stays awake while the deck is open. P-2 narrows this to "while connected"
@@ -21,7 +23,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar hidden />
-      {SCREEN === 'measure' ? (
+      {SCREEN === 'link' ? (
+        <LinkSpike />
+      ) : SCREEN === 'measure' ? (
         <Measure />
       ) : SCREEN === 'materials' ? (
         <Materials />
