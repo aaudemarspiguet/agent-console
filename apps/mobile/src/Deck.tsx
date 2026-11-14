@@ -5,7 +5,8 @@ import type { KeyId } from '@deck/protocol';
 import { Key } from './Key';
 import { SHOWN_LIGHTS } from './lights';
 import { COLUMNS, DEFAULT_KEYS, ROWS } from './layout';
-import { EffortWheel, ISLAND_PILL_WIDTH, IslandPill, StatusStrip, WHEEL_COLUMN_WIDTH } from './PlateParts';
+import { EffortWheel, WHEEL_COLUMN_WIDTH } from './EffortWheel';
+import { ISLAND_PILL_WIDTH, IslandPill, StatusStrip } from './PlateParts';
 import { useCameraSide } from './useCameraSide';
 
 const GAP = 9;

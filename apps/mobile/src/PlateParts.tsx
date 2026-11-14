@@ -48,29 +48,6 @@ export function StatusStrip({ linked, requestWaiting }: { linked: boolean; reque
   );
 }
 
-const RIDGES = 32;
-
-/**
- * The effort wheel, drawn as hardware on the plate edge (K-9). It is only drawn
- * here: turning it is not built yet, so its light stays off.
- */
-export function EffortWheel() {
-  return (
-    <View style={styles.wheel} accessibilityLabel="Effort wheel, not active">
-      <Led label="Effort wheel light, off" />
-      <View style={styles.wheelSlot}>
-        <View style={styles.wheelCylinder}>
-          {Array.from({ length: RIDGES }, (_, index) => (
-            <View key={index} style={styles.ridge} />
-          ))}
-          <View style={styles.wheelShade} />
-        </View>
-      </View>
-      <Silk>Effort</Silk>
-    </View>
-  );
-}
-
 /**
  * Size of the closed island: the iPhone 17's cutout as measured in landscape
  * (docs/HANDOFF.md, T1), so the pill and the cutout show as one shape with no
@@ -78,8 +55,6 @@ export function EffortWheel() {
  */
 export const ISLAND_PILL_WIDTH = 37;
 
-/** Width of the wheel's column: slot, light and label. */
-export const WHEEL_COLUMN_WIDTH = 60;
 const ISLAND_PILL_LENGTH = 125;
 
 /** The island when closed: a black pill around the camera cutout (K-7). */
@@ -130,40 +105,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(0,0,0,0.75)',
     transform: [{ rotate: '35deg' }],
-  },
-  /** Wide enough for the "Effort" label on one line; the 34-point slot is centred in it. */
-  wheel: {
-    width: WHEEL_COLUMN_WIDTH,
-    alignItems: 'center',
-    gap: 7,
-  },
-  wheelSlot: {
-    width: 34,
-    height: 168,
-    padding: 4,
-    borderRadius: 17,
-    backgroundColor: '#050506',
-    boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.07)',
-  },
-  wheelCylinder: {
-    flex: 1,
-    borderRadius: 13,
-    overflow: 'hidden',
-    backgroundColor: '#1E1E20',
-    gap: 3,
-  },
-  ridge: {
-    height: 2,
-    backgroundColor: '#4C4C50',
-  },
-  wheelShade: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundImage:
-      'linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0) 24%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0) 76%, rgba(0,0,0,0.88) 100%)',
   },
   pill: {
     width: ISLAND_PILL_WIDTH,
