@@ -1,6 +1,6 @@
 # Handoff: state of the project on 2026-11-13
 
-Read this with [product-brief.md](../product-brief.md) (version 13), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
+Read this with [product-brief.md](../product-brief.md) (version 14), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
 
 ## What the product is
 
@@ -10,9 +10,9 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 | Path | What it is | State |
 |---|---|---|
-| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 13) |
+| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 14) |
 | `competitor-research.md` | Earlier research on similar products | Reference |
-| `apps/mobile` | The phone app: Expo SDK 58, React Native 0.88, TypeScript | Runs in Expo Go; one screen; does not match the design yet |
+| `apps/mobile` | The phone app: Expo SDK 58, React Native 0.88, TypeScript | Runs in a development build on the iPhone (T10) and in Expo Go; one screen; does not match the design yet |
 | `apps/agent` | The PC side: a Node script | Gate 0 spike: QR pairing, encrypted WebSocket link, Claude Code hook endpoints (T8) |
 | `packages/protocol` | Code shared by phone and PC | Message shapes and the encrypted channel (T8) |
 | `design/mockups` | The design boards (HTML) and the scripts that generate them | Current design, drawn at the wrong phone size |
@@ -24,7 +24,8 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 - **Stack:** one codebase in React Native with Expo, for iPhone now and Android later (stretch goal S5). No separate native apps and no Mac. Keep the code free of iOS-only libraries where a cross-platform one exists.
 - **Package manager:** pnpm, as one workspace. Use `pnpm exec expo install <package>` for Expo libraries so versions match the SDK.
-- **Builds:** the user will pay for the Apple Developer Program and use development builds made by Expo's cloud service. Expo Go is a stopgap until the account is active. The speech library is already installed for that reason.
+- **Builds:** development builds made by Expo's cloud service (EAS), signed with the user's paid Apple Developer account (team WQ4328BM62). The first one was installed on 2026-11-13 (T10). Expo Go still works for screens that use no library outside it.
+- **Bundle identifier:** `dev.amoghmade.agentconsole`, from the user's domain `amoghmade.dev`. Registered with Apple, so it cannot change without starting again as a new app. It does not depend on the product name.
 - **Keys:** fixed legends, one action each, no app icons on keys, nothing changes outside the island except lights (K-1 to K-3).
 - **Key grid:** five columns by four rows (K-11), six number keys (K-10), two saved-reply keys (R-1 to R-5).
 - **Effort wheel:** required (K-9, E-1 to E-7), delivered by typing `/effort` into the session's console.
@@ -236,9 +237,16 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Do:** the items still open under G0-5: an elevated terminal (needs a UAC prompt answered), the user typing at the same moment, how the PC agent finds a session's process from its hooks, whether a hook reports the current effort level, and whether the prompt box's stash state can be told before Ctrl+S is sent.
 - **Use:** `spike/console-typing`. Read its README first; it types into real sessions.
 
-### T10. First development build (needs the user)
-- **User does:** enrol in the Apple Developer Program, create an Expo account, and choose a bundle identifier (hard to change later).
-- **Then:** configure the cloud build, make a development build, and install it on the phone.
+### T10. First development build (done 2026-11-13, with the user)
+- **Result:** the app runs on the user's iPhone 17 as a development build, loading from the PC's dev server over Wi-Fi.
+  - **Accounts:** Expo account `amogh0000` (personal; the user also owns `amogh0000s-team`, unused). EAS project `@amogh0000/agent-console`, id in `app.json` under `extra.eas.projectId`. Apple team WQ4328BM62.
+  - **Config:** `ios.bundleIdentifier` in `app.json`; `apps/mobile/eas.json` with Expo's default `development` (dev client, internal distribution), `preview` and `production` profiles. During the build EAS also wrote into `app.json`: the iOS microphone and speech texts under `ios.infoPlist` (copied from the plugin settings), `ITSAppUsesNonExemptEncryption: false` (the user answered that the app only uses standard encryption), and Android camera and microphone permissions.
+  - **Credentials:** the Apple distribution certificate and the ad hoc provisioning profile were made by EAS and are stored on Expo's servers. The iPhone (UDID 00008150-000104C93C45401C) is registered for internal distribution. EAS keeps an Apple sign-in session at `~/.app-store/auth/`.
+  - **The first `device:create` failed** with "no team associated with your Apple account", minutes after the user enrolled. The same command worked about ten minutes later with nothing changed, so it was most likely Apple's systems catching up.
+  - **The cloud build** took about 5½ minutes, Skia's native code included.
+- **How:** `pnpm dlx eas-cli@latest <command>` from `apps/mobile` (eas-cli 27.9.0 was used; not installed globally). pnpm's `dlx` asks once which of eas-cli's packages may run build scripts (`dtrace-provider`, `protobufjs`): press Enter with none ticked. The phone camera could not read the terminal's text QR codes reliably ("No usable data found"); open the build's expo.dev link in Safari, and in the app pick the dev server from the list or type `http://<PC address>:8081`.
+- **Checked:** the deck showed on the phone (the user's word). **Not checked:** whether the development build honours the landscape lock that Expo Go ignored; speech recognition, the camera and haptics inside the build; whether the look differs from Expo Go.
+- **Open:** EAS warns that `cli.appVersionSource` in `eas.json` will be required in future; not set yet. A new native library or a change to `app.json` needs a new build (`eas build --platform ios --profile development`); JavaScript changes do not.
 
 ### T11. Give the keys a "creamy" sound (asked by the user on 2026-11-13; later)
 - **Goal, in the user's words:** "Creamy: Smooth, cushioned, deep, and slightly thuddy acoustic signature." This is the sound that goes with the heavy press from T6b; the brief's K-4 records it.
@@ -269,7 +277,7 @@ The island's open states (session list, request, transcript, results), layout mo
 
 - **The tray agent's language.** The spike uses Node. The real agent needs a tray icon and Windows console calls; C# does both easily but shares no code with the phone, and the .NET SDK is not installed on this PC.
 - **How far to use console typing** beyond the effort wheel (brief, open decision 5).
-- **Bundle identifier, final name, licence.**
+- **Final name, licence.** (The bundle identifier was decided in T10.)
 - **The `apple-design` skill** under `.claude/skills` contains Apple's guideline text. Remove it before making the repository public.
 
 ## How to run things
@@ -283,6 +291,16 @@ pnpm --filter mobile go
 ```
 
 That starts the phone app for Expo Go: scan the QR code with the iPhone camera, with phone and PC on the same Wi-Fi.
+
+```bash
+pnpm --filter mobile start
+```
+
+That starts it for the development build (T10). Open Deck on the phone and pick the server, or type `http://<PC address>:8081`. To make a new build after adding a native library or changing `app.json`, run this from `apps/mobile`:
+
+```bash
+pnpm dlx eas-cli@latest build --platform ios --profile development
+```
 
 To see the app in a browser beside a mockup, see T2 (`deck-web` and `mockups` in `.claude/launch.json`, and `design/mockups/make-compare.ps1`).
 
