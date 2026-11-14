@@ -6,7 +6,7 @@ import { SkiaKey } from './SkiaKey';
 import { dotStyle, GREEN, glowStyle, type Light, shared, WHITE } from './shared';
 
 /**
- * TEMPORARY (handoff task T5). The same lit number key drawn five ways, each
+ * Kept as a record (handoff task T5; see README.md). The same lit number key drawn five ways, each
  * lit green and white, so the user can pick a material from phone screenshots.
  * Shown instead of the deck while `SCREEN` in App.tsx is 'materials'.
  */

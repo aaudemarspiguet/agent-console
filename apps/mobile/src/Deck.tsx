@@ -3,6 +3,7 @@ import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { KeyId } from '@deck/protocol';
 import { Key } from './Key';
+import { SHOWN_LIGHTS } from './lights';
 import { COLUMNS, DEFAULT_KEYS, ROWS } from './layout';
 import { EffortWheel, ISLAND_PILL_WIDTH, IslandPill, StatusStrip, WHEEL_COLUMN_WIDTH } from './PlateParts';
 import { useCameraSide } from './useCameraSide';
@@ -31,7 +32,8 @@ interface DeckProps {
 
 /**
  * The plate with the island closed: status strip, key grid, island pill and
- * effort wheel. Nothing is connected yet, so the Link light is off and a key
+ * effort wheel. Nothing is connected yet, so the lights come from DEMO_LIGHTS
+ * in lights.ts (temporary, T6), and a key
  * press only gives the press movement and haptic (K-4).
  */
 export function Deck({ onKeyPress }: DeckProps) {
@@ -39,6 +41,8 @@ export function Deck({ onKeyPress }: DeckProps) {
   const cameraSide = useCameraSide();
   const wheelSide = cameraSide === 'left' ? 'right' : 'left';
   const [grid, setGrid] = useState({ width: 0, height: 0 });
+  // Nothing is connected yet, so the lights come from the temporary demo switch (T6).
+  const lights = SHOWN_LIGHTS;
 
   const onGridLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -60,6 +64,7 @@ export function Deck({ onKeyPress }: DeckProps) {
         },
       ]}
     >
+      <View style={styles.grain} pointerEvents="none" />
       <View style={[styles.edge, { [cameraSide]: islandInset(insets[cameraSide]) }]} pointerEvents="none">
         <IslandPill />
       </View>
@@ -67,7 +72,7 @@ export function Deck({ onKeyPress }: DeckProps) {
         <EffortWheel />
       </View>
 
-      <StatusStrip linked={false} requestWaiting={false} />
+      <StatusStrip linked={lights.linked} requestWaiting={lights.requestWaiting} />
       <View style={styles.grid} onLayout={onGridLayout}>
         {grid.width > 0 &&
           DEFAULT_KEYS.map((key) => (
@@ -78,6 +83,8 @@ export function Deck({ onKeyPress }: DeckProps) {
               top={key.row * (cellHeight + GAP)}
               width={cellWidth * (key.wide ?? 1) + GAP * ((key.wide ?? 1) - 1)}
               height={cellHeight * (key.high ?? 1) + GAP * ((key.high ?? 1) - 1)}
+              light={lights.sessions[key.id]}
+              unlit={lights.unlit.includes(key.id)}
               onPress={onKeyPress}
             />
           ))}
@@ -102,5 +109,20 @@ const styles = StyleSheet.create({
   },
   grid: {
     flex: 1,
+  },
+  /**
+   * The plate's fine horizontal grain: a 1-point light line every 3 points, as
+   * the mockup's repeating gradient. React Native documents only linear and
+   * radial gradients, so one hard-edged line is drawn and tiled.
+   */
+  grain: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundImage: 'linear-gradient(0deg, rgba(255,255,255,0.028) 1px, rgba(255,255,255,0) 1px)',
+    backgroundSize: '100% 3px',
+    backgroundRepeat: 'repeat',
   },
 });

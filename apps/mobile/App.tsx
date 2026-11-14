@@ -8,8 +8,8 @@ import { Materials } from './src/materials/Materials';
 
 /**
  * Which screen to show. 'deck' is the app. 'measure' is the measuring screen from
- * handoff task T1, for measuring another phone. 'materials' is the temporary key
- * material samples from T5.
+ * handoff task T1, for measuring another phone. 'materials' is the key
+ * material samples from T5, kept as a record (src/materials/README.md).
  */
 const SCREEN = 'deck' as 'deck' | 'measure' | 'materials';
 

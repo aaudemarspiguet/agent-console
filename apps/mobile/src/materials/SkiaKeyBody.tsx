@@ -12,7 +12,7 @@ import {
 import { CAP, type Light, WELL_HEIGHT, WELL_WIDTH } from './shared';
 
 /**
- * TEMPORARY (handoff task T5). The lit key drawn with React Native Skia: the
+ * Kept as a record (handoff task T5; see README.md). The lit key drawn with React Native Skia: the
  * glow is a real 14-point Gaussian blur, and the cap blurs what is under it,
  * as the mockup's backdrop-filter does.
  */

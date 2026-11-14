@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * TEMPORARY (handoff task T5). Shared sizes and colours for the material
+ * Kept as a record (handoff task T5; see README.md). Shared sizes and colours for the material
  * samples. Values follow the mockups' number key ("1 · At rest", key 2).
  */
 
