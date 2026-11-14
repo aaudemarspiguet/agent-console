@@ -1,9 +1,10 @@
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { GlassView, isGlassEffectAPIAvailable } from 'expo-glass-effect';
 import type { KeyId } from '@deck/protocol';
 import type { KeyDef } from './layout';
 import { LIGHT_COLOURS, type SessionLight } from './lights';
+import { PRESS_DROP, pressDown, pressUp } from './pressFeel';
 
 /**
  * Number keys are Apple's Liquid Glass, "clear" tinted 25% black (handoff T5,
@@ -72,6 +73,15 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
   const look = def.look === 'primary' && unlit ? lookStyles.primaryUnlit : lookStyles[def.look];
   const lightColour = light ? `rgb(${LIGHT_COLOURS[light].rgb})` : undefined;
 
+  // How far the cap is down, in points. The cap's lift shadow switches to its
+  // pressed form while the cap is more than halfway down.
+  const travel = useRef(new Animated.Value(0)).current;
+  const [down, setDown] = useState(false);
+  useEffect(() => {
+    const id = travel.addListener(({ value }) => setDown(value > PRESS_DROP / 2));
+    return () => travel.removeListener(id);
+  }, [travel]);
+
   return (
     <View style={[styles.well, { left, top, width, height }]}>
       {isNumber && light ? <Glow light={light} width={width} height={height} /> : null}
@@ -79,12 +89,12 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
         accessibilityRole="button"
         accessibilityLabel={def.spoken ?? def.legend}
         accessibilityState={{ disabled: unlit }}
-        onPressIn={() => {
-          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }}
+        onPressIn={() => pressDown(travel)}
+        onPressOut={() => pressUp(travel)}
         onPress={() => onPress(def.id)}
-        style={({ pressed }) => [styles.cap, pressed ? look.down : look.up, pressed && styles.capDown]}
+        style={styles.press}
       >
+        <Animated.View style={[styles.cap, down ? look.down : look.up, { transform: [{ translateY: travel }] }]}>
         {isNumber && GLASS ? (
           <>
             {/* The mockup's pale face under the glass, so an unlit glass key is grey, not black (T6). */}
@@ -112,6 +122,7 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
             {def.legend}
           </Text>
         )}
+        </Animated.View>
       </Pressable>
     </View>
   );
@@ -134,8 +145,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  capDown: {
-    transform: [{ translateY: 2 }],
+  press: {
+    flex: 1,
   },
   /** The glass fills the cap. It ignores borderRadius unless it clips. */
   glass: {

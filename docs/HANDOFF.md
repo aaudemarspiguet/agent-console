@@ -124,7 +124,27 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Do:** apply the choice from T5 (Liquid Glass "clear" tinted 25% black, sample T1 in `src/materials/Materials.tsx`) to every key, add the glow and lit states behind a temporary demo switch, and add the plate grain if it can be done cheaply.
 - **Done when:** the T2 view matches the redrawn mockup board "1 · At rest", and the user confirms on the phone.
 
-### T6b. Make key presses feel heavy (asked by the user on 2026-11-13)
+### T6b. Make key presses feel heavy (done 2026-11-13)
+- **Choice:** variant **A heavy**, on every key. The user tried the four on the phone and picked "whatever run tests button uses", which was A: in the compare build, every key other than 1 to 6 used A. The brief's K-4 records it. `PRESS_FEEL` and the other variants were removed from `src/pressFeel.ts`; the table below keeps their values in case the feel is revisited.
+- **From live docs:**
+  - **`expo-haptics` (SDK 58 reference):** `impactAsync` takes one of five fixed styles: Light, Medium, Heavy, Rigid and Soft. On iOS these map straight to `UIImpactFeedbackStyle`. There is no intensity or pattern setting, so the only ways to change the feel are the style and timing two pulses with a delay. iOS does nothing in Low Power Mode, when the Taptic Engine is off in settings, or while the camera or dictation is on.
+  - **Custom patterns:** for custom patterns, Expo's page points to the Pulsar haptics SDK (docs.swmansion.com/pulsar). Not fetched or tried: whether it runs in Expo Go is unknown, and it most likely needs a development build.
+  - **Movement (React Native 0.88 `Animated`):** `spring` takes stiffness, damping and mass, and `timing` takes a duration and an easing. The native driver supports `transform`, but not `boxShadow`.
+- **Built:**
+  - **Where:** `src/pressFeel.ts` holds the feels. `Key.tsx` now uses a `Pressable` with an `Animated.View` cap that moves by `translateY`. The cap's shadow switches to its pressed form while the cap is more than halfway down, read through a listener on the animated value.
+  - **Comparison build (removed after the choice):** the temporary `PRESS_FEEL` switch, set to `'compare'`, gave each number key its own feel: 1 current, 2 A, 3 B, 4 C, then 5 A and 6 B again. Every other key used A.
+
+    | Variant | Press | Second pulse | Release | Drop | Return |
+    |---|---|---|---|---|---|
+    | current | Medium | none | none | 2 pt | snaps back |
+    | A heavy | Heavy | none | Soft | 3 pt | spring, about 0.7 s, rises 0.4 pt past rest once |
+    | B gluunk | Rigid | Soft, 70 ms later | Light | 3.5 pt | eased over 320 ms, no bounce |
+    | C deep | Heavy | Heavy, 90 ms later | Soft | 4 pt | spring, about 1 s, no bounce |
+- **Checked:**
+  - The type check passes.
+  - "current" moves 2 points in the web view.
+  - The return times and overshoot above come from simulating the spring settings, not from watching them. The browser pane drew only one animation frame in 800 ms, so the springs could not be watched there.
+- **Not checked:** the final build, with A on every key and the switch removed, was type-checked but not tried on the phone. The code was simplified, but the values are the ones the user felt on "run tests".
 - **Goal:** a press should feel deep, like a heavy glass key going down and coming back slowly: a "gluunk", not a click. Today a press is one `expo-haptics` medium impact and a 2-point drop that snaps back (`Key.tsx`).
 - **Do:** from live documentation for the installed versions, find what can shape the feel in Expo Go and what needs a development build: `expo-haptics` (impact styles, and whether two pulses on press and release can be timed), Apple's Core Haptics for a custom pattern (likely a library and a development build), and a spring or slow timing for the cap's return (React Native's `Animated`, or Reanimated). Try a few versions: a firmer press-in haptic, a softer one on release, a deeper drop, a slow damped return. Put them behind a temporary switch like `SCREEN`, so the user can feel each one on the phone.
 - **Done when:** the user has picked one by feel on the phone, it is applied to every key, and K-4 in the brief says what was chosen. Haptics cannot be checked on the web; only the movement can.
