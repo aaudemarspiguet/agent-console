@@ -1,6 +1,6 @@
 # Handoff: state of the project on 2026-11-13
 
-Read this with [product-brief.md](../product-brief.md) (version 12), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
+Read this with [product-brief.md](../product-brief.md) (version 13), which holds the requirements. This file holds where the work stands, what is wrong, and the tasks in order.
 
 ## What the product is
 
@@ -10,14 +10,14 @@ A free iPhone app that sits beside the keyboard as a "deck" for coding agents, w
 
 | Path | What it is | State |
 |---|---|---|
-| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 12) |
+| `product-brief.md` | Requirements, trade-offs, feasibility research | Current (version 13) |
 | `competitor-research.md` | Earlier research on similar products | Reference |
 | `apps/mobile` | The phone app: Expo SDK 58, React Native 0.88, TypeScript | Runs in Expo Go; one screen; does not match the design yet |
 | `apps/agent` | The PC side: a Node script | Gate 0 spike: QR pairing, encrypted WebSocket link, Claude Code hook endpoints (T8) |
 | `packages/protocol` | Code shared by phone and PC | Message shapes and the encrypted channel (T8) |
 | `design/mockups` | The design boards (HTML) and the scripts that generate them | Current design, drawn at the wrong phone size |
 | `design/saved-keycaps-v1` | An older design, kept for reference | Superseded |
-| `spike/console-typing` | Scripts that proved the effort-wheel route | Working test scripts, not product code |
+| `spike/console-typing` | Scripts that proved the effort-wheel route | Working test scripts, not product code; G0-5 done (T9) |
 | `spike/connection` | Notes and a playground project for the connection spike | T8; the code itself is in `apps/` and `packages/` |
 
 ## Decisions already made (do not reopen without the user)
@@ -223,7 +223,16 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **After:** `SCREEN` in `App.tsx` is back on `'deck'`; set it to `'link'` to use the test screen again. The deck's keys are not wired to the link yet; that belongs with Release 2 (A-1 to A-3).
 - **Done when:** the three gate items are demonstrated on the phone and their results are written into the brief's feasibility section.
 
-### T9. Finish the effort-wheel tests (needs the user at the PC)
+### T9. Finish the effort-wheel tests (done 2026-11-13, with the user at the PC)
+- **Result:** the full results are in the brief ("Tested on this PC", second round) and in `spike/console-typing/README.md`. E-5 and E-7 were changed to match (brief version 13). In short:
+  - **Finding the process:** the owning process of the HTTP hook's TCP connection is the session's `claude.exe`, the one to attach to. Worked for headless, interactive and elevated sessions.
+  - **Current effort:** `effort.level` is in the hook input on PreToolUse, PostToolUse and Stop, but not on UserPromptSubmit or Notification. A SessionStart HTTP hook never fired. The level also shows above the prompt box.
+  - **Elevated terminal:** the agent cannot attach (error 5). The session's hooks still arrive, so it can be listed with the wheel unlit.
+  - **The user typing at the same time:** with separate writes, the user's letters got between Ctrl+S and `/effort` every time, and Enter sent them to the model as prompts (three stray Haiku turns, in the test session only). With Ctrl+S, `/effort` and Enter as one write, nothing stray was sent. Keys typed while the slider is open are still swallowed, and one change in three was lost. So the agent must wait for the box to go still (E-7).
+  - **Stash state:** the "stashed" marker shows a stash exists, and the stash holds only one draft. The cursor column tells a draft from an empty box unless the cursor is at the start of the draft. Colours read as plain grey, so they cannot help.
+  - **New hazard:** Enter on the slider and `/effort <level>` both save a new default to `~/.claude/settings.json`. Only `s` is session-only. See "Traces" below.
+- **Added:** `spike/console-typing/step.ps1`, the batched step.
+- **Checked:** every result above was read off the session's screen or the hook log at the time. **Not checked:** Ctrl+S on an empty box with no stash; a multi-line draft; the timing of a real agent (the spike takes about a second for each write); how long the box must be still before sending; SSH, WSL, Codex, Cursor's agent, Antigravity.
 - **Do:** the items still open under G0-5: an elevated terminal (needs a UAC prompt answered), the user typing at the same moment, how the PC agent finds a session's process from its hooks, whether a hook reports the current effort level, and whether the prompt box's stash state can be told before Ctrl+S is sent.
 - **Use:** `spike/console-typing`. Read its README first; it types into real sessions.
 
@@ -295,4 +304,6 @@ pnpm agent
 
 - The Codex CLI was updated from 0.166.0 to 0.169.0 by an accidental key press during the console-typing test.
 - Claude Code has a scratch test folder marked as trusted.
+- **T9 changed the user's Claude Code settings:** a test `/effort low` wrote `"claude-haiku-5-5": { "effortLevel": "low" }` under `modelSettings` in `~/.claude/settings.json` (20:38 on 2026-11-13). Whether that entry existed before is not known. Removed at the user's request the same evening.
+- T9 opened two test console sessions, one elevated, in a scratch folder under the session's temp directory; both are closed.
 - pnpm is allowed to run esbuild's install script (`pnpm-workspace.yaml`).
