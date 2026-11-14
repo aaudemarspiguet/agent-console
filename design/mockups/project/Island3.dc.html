@@ -17,12 +17,13 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 .ring{outline:2px solid rgba(255,255,255,.92);outline-offset:2px}
 .glow{position:absolute;left:20%;right:20%;top:32%;bottom:16%;border-radius:50%;filter:blur(14px);opacity:.8}
 .key{position:relative;flex:1 1 0;min-width:0;padding:0;border-radius:10px;color:#fff;border:1px solid rgba(255,255,255,.15);background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08));-webkit-backdrop-filter:blur(14px) saturate(1.7);backdrop-filter:blur(14px) saturate(1.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -5px 9px rgba(0,0,0,.2),0 3px 0 #1A1A1D,0 5px 8px rgba(0,0,0,.6);transition:transform .06s ease-out,box-shadow .06s ease-out;display:flex;align-items:center;justify-content:center}
-.key.solid{border-color:rgba(255,255,255,.1);background:linear-gradient(180deg,#343437,#252527);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -5px 9px rgba(0,0,0,.25),0 3px 0 #111113,0 5px 8px rgba(0,0,0,.6)}
+.key.solid{border-color:rgba(255,255,255,.05);background:linear-gradient(180deg,#2D2D30,#29292C);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 0 #111113,0 5px 8px rgba(0,0,0,.6)}
 .key:active,.key.down{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -3px 6px rgba(0,0,0,.3),0 1px 0 #1A1A1D,0 1px 3px rgba(0,0,0,.6)}
-.key.tint{border-color:rgba(255,255,255,.26);background:linear-gradient(180deg,#3493FF,#0A84FF);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 9px rgba(0,40,110,.28),0 3px 0 #0A4FA3,0 5px 8px rgba(0,0,0,.6)}
-.key.tint:active,.key.tint.down{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #0A4FA3,0 1px 3px rgba(0,0,0,.6)}
+.key.tint{border-color:rgba(255,255,255,.08);background:linear-gradient(180deg,#1A88F7,#1480EE);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 0 #0A4FA3,0 5px 8px rgba(0,0,0,.6)}
+.key.solid:active,.key.solid.down{background:linear-gradient(180deg,#2A2A2D,#27272A);box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 1px 0 #111113,0 1px 3px rgba(0,0,0,.6)}
+.key.tint:active,.key.tint.down{background:linear-gradient(180deg,#1683F0,#127BE6);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 0 #0A4FA3,0 1px 3px rgba(0,0,0,.6)}
 .key.off{color:rgba(255,255,255,.3)}
-.key.tint.off{border-color:rgba(255,255,255,.13);color:rgba(255,255,255,.42);background:linear-gradient(180deg,#224B7B,#16365C);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -5px 9px rgba(0,20,60,.3),0 3px 0 #0C2748,0 5px 8px rgba(0,0,0,.6)}
+.key.tint.off{border-color:rgba(255,255,255,.05);color:rgba(255,255,255,.42);background:linear-gradient(180deg,#1F4573,#1B3F69);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 0 #0C2748,0 5px 8px rgba(0,0,0,.6)}
 .num{font-size:24px;line-height:29px;font-weight:400;letter-spacing:.2px}
 .leg{position:absolute;bottom:9px;font-size:13px;line-height:16px;font-weight:500;letter-spacing:-.08px;text-align:left}
 .leg.l{left:11px}
@@ -70,11 +71,6 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 .sheet{position:absolute;z-index:5;left:0;right:0;top:0;bottom:0;box-sizing:border-box;padding:14px 16px;border-radius:24px;background:rgba(44,44,46,.82);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 14px 34px rgba(0,0,0,.55);display:flex;flex-direction:column}
 .chip{height:28px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(235,235,245,.7);font-size:13px;line-height:28px;letter-spacing:-.08px}
 .six .row{height:44px}
-.g4 .leg{bottom:8px;font-size:11px;line-height:13px;letter-spacing:0}
-.g4 .leg.l{left:10px}
-.g4 .leg.r{right:10px}
-.g4 .gl{top:9px;width:12px;height:12px;opacity:.7}
-.g4 .alt{top:9px;right:10px;font-size:9px;line-height:12px;letter-spacing:.1px}
 .g4 .num{font-size:20px;line-height:24px}
 .g4 .dot{top:8px;left:9px}
 .whl{position:absolute;z-index:3;right:11px;top:100px;width:40px;display:flex;flex-direction:column;align-items:center;gap:7px}
@@ -146,19 +142,19 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
         <button class="key tint"><svg class="gl r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="leg r">allow</span></button>
       </div>
       <div class="well">
-        <button class="key solid" aria-label="Saved reply: run tests"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">run<br>tests</span></button>
+        <button class="key solid" aria-label="Saved reply: run tests"><span class="leg l">run<br>tests</span></button>
       </div>
       <div class="well">
-        <button class="key solid" aria-label="Saved reply: explain"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">explain</span></button>
+        <button class="key solid" aria-label="Saved reply: explain"><span class="leg l">explain</span></button>
       </div>
       <div class="well">
-        <button class="key solid" aria-label="Always allow for this session"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12.5l4 4 8-9M11 15l1.5 1.5 8.5-9"/></svg><span class="alt">session</span><span class="leg l">always<br>allow</span></button>
+        <button class="key solid" aria-label="Always allow for this session"><span class="leg l">always<br>allow</span></button>
       </div>
       <div class="well" style="grid-column: span 2">
         <button class="key solid" aria-label="Redirect, hold to talk"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><span class="alt">hold to talk</span><span class="leg l">redirect</span></button>
       </div>
       <div class="well">
-        <button class="key solid off"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="leg l">cancel</span></button>
+        <button class="key solid off"><span class="leg l">cancel</span></button>
       </div>
       <div class="well" style="grid-column: span 2">
         <button class="key solid off"><svg class="gl r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 12l7-7 7 7"/></svg><span class="leg r">send</span></button>

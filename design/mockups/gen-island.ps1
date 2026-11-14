@@ -8,7 +8,7 @@ function NumKey($k, $n, $glow, $dot) {
   return '      <div class="well@@W_' + $k + '@@">' + $gl + "`n" + '        <button class="key@@C_' + $k + '@@" aria-label="Session ' + $n + '"><span class="dot" style="' + $dot + '"></span><span class="num">' + $n + '</span></button>' + "`n" + '      </div>' + "`n"
 }
 function ReplyKey($k, $name, $legend) {
-  return '      <div class="well@@W_' + $k + '@@">' + "`n" + '        <button class="key solid@@C_' + $k + '@@" aria-label="Saved reply: ' + $name + '"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-4 4v-4H4z"/></svg><span class="leg l">' + $legend + '</span></button>' + "`n" + '      </div>' + "`n"
+  return '      <div class="well@@W_' + $k + '@@">' + "`n" + '        <button class="key solid@@C_' + $k + '@@" aria-label="Saved reply: ' + $name + '"><span class="leg l">' + $legend + '</span></button>' + "`n" + '      </div>' + "`n"
 }
 $gWhite = 'background: #FFFFFF; opacity: .32'; $dWhite = 'background: #FFFFFF; box-shadow: 0 0 7px #FFFFFF'; $dIdle = 'background: #48484A'
 # brief A-3: thinking is blue, an error is red
@@ -21,7 +21,7 @@ $wDeny = @'
 '@
 $wAlways = @'
       <div class="well@@W_always@@">
-        <button class="key solid@@C_always@@" aria-label="Always allow for this session"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12.5l4 4 8-9M11 15l1.5 1.5 8.5-9"/></svg><span class="alt">session</span><span class="leg l">always<br>allow</span></button>
+        <button class="key solid@@C_always@@" aria-label="Always allow for this session"><span class="leg l">always<br>allow</span></button>
       </div>
 '@
 $wAllow = @'
@@ -34,7 +34,7 @@ $wVoice = @'
         <button class="key solid@@C_red@@" aria-label="Redirect, hold to talk"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg><span class="alt">hold to talk</span><span class="leg l">redirect</span></button>
       </div>
       <div class="well@@W_cancel@@">
-        <button class="key solid@@C_cancel@@"><svg class="gl l" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="leg l">cancel</span></button>
+        <button class="key solid@@C_cancel@@"><span class="leg l">cancel</span></button>
       </div>
       <div class="well@@W_send@@" style="grid-column: span 2">
         <button class="key solid@@C_send@@"><svg class="gl r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 12l7-7 7 7"/></svg><span class="leg r">send</span></button>
@@ -80,11 +80,6 @@ $css = $baseCss + "`n" + @'
 .sheet{position:absolute;z-index:5;left:0;right:0;top:0;bottom:0;box-sizing:border-box;padding:14px 16px;border-radius:24px;background:rgba(44,44,46,.82);-webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 14px 34px rgba(0,0,0,.55);display:flex;flex-direction:column}
 .chip{height:28px;padding:0 10px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(235,235,245,.7);font-size:13px;line-height:28px;letter-spacing:-.08px}
 .six .row{height:44px}
-.g4 .leg{bottom:8px;font-size:11px;line-height:13px;letter-spacing:0}
-.g4 .leg.l{left:10px}
-.g4 .leg.r{right:10px}
-.g4 .gl{top:9px;width:12px;height:12px;opacity:.7}
-.g4 .alt{top:9px;right:10px;font-size:9px;line-height:12px;letter-spacing:.1px}
 .g4 .num{font-size:20px;line-height:24px}
 .g4 .dot{top:8px;left:9px}
 .whl{position:absolute;z-index:3;right:11px;top:100px;width:40px;display:flex;flex-direction:column;align-items:center;gap:7px}

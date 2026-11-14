@@ -5,6 +5,7 @@ import type { KeyId } from '@deck/protocol';
 import type { KeyDef } from './layout';
 import { LIGHT_COLOURS, type SessionLight } from './lights';
 import { PRESS_DROP, pressDown, pressUp } from './pressFeel';
+import { Glyph } from './Glyph';
 
 /**
  * Number keys are Apple's Liquid Glass, "clear" tinted 25% black (handoff T5,
@@ -72,6 +73,9 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
   const isNumber = def.look === 'number';
   const look = def.look === 'primary' && unlit ? lookStyles.primaryUnlit : lookStyles[def.look];
   const lightColour = light ? `rgb(${LIGHT_COLOURS[light].rgb})` : undefined;
+  const right = def.legendSide === 'right';
+  // Legend, glyph and hint share one ink, dimmed when the key does nothing (K-3).
+  const inkColour = !unlit ? '#FFFFFF' : def.look === 'primary' ? INK_UNLIT_PRIMARY : INK_UNLIT;
 
   // How far the cap is down, in points. The cap's lift shadow switches to its
   // pressed form while the cap is more than halfway down.
@@ -111,16 +115,25 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
             <Text style={styles.number}>{def.legend}</Text>
           </>
         ) : (
-          <Text
-            style={[
-              styles.legend,
-              def.legendSide === 'right' ? styles.legendRight : styles.legendLeft,
-              unlit && (def.look === 'primary' ? styles.legendUnlitPrimary : styles.legendUnlit),
-            ]}
-            numberOfLines={2}
-          >
-            {def.legend}
-          </Text>
+          <>
+            {/* Wide keys carry a glyph above the legend and may have a hint opposite it (T7). */}
+            {def.glyph ? (
+              <View style={[styles.glyph, right ? styles.glyphRight : styles.glyphLeft]}>
+                <Glyph name={def.glyph} size={15} color={inkColour} />
+              </View>
+            ) : null}
+            {def.hint ? (
+              <Text style={[styles.hint, right ? styles.hintLeft : styles.hintRight, { color: inkColour }]}>
+                {def.hint}
+              </Text>
+            ) : null}
+            <Text
+              style={[styles.legend, right ? styles.legendRight : styles.legendLeft, { color: inkColour }]}
+              numberOfLines={2}
+            >
+              {def.legend}
+            </Text>
+          </>
         )}
         </Animated.View>
       </Pressable>
@@ -200,13 +213,37 @@ const styles = StyleSheet.create({
     right: 11,
     textAlign: 'right',
   },
-  legendUnlit: {
-    color: 'rgba(255,255,255,0.3)',
+  /** Glyph and hint values match the boards' `.gl` and `.alt` (gen-flow.ps1). */
+  glyph: {
+    position: 'absolute',
+    top: 9,
+    opacity: 0.85,
   },
-  legendUnlitPrimary: {
-    color: 'rgba(255,255,255,0.42)',
+  glyphLeft: {
+    left: 10,
+  },
+  glyphRight: {
+    right: 10,
+  },
+  hint: {
+    position: 'absolute',
+    top: 9,
+    fontSize: 11,
+    lineHeight: 13,
+    fontWeight: '400',
+    letterSpacing: 0.06,
+    opacity: 0.55,
+  },
+  hintLeft: {
+    left: 11,
+  },
+  hintRight: {
+    right: 11,
   },
 });
+
+const INK_UNLIT = 'rgba(255,255,255,0.3)';
+const INK_UNLIT_PRIMARY = 'rgba(255,255,255,0.42)';
 
 /** Cap finish for each look, at rest and pressed. */
 const lookStyles = {
@@ -233,45 +270,44 @@ const lookStyles = {
           },
         },
   ),
+  // Action keys and Allow are matte, like a Mac keyboard's keys (chosen by the
+  // user on 2026-11-13 over bead-blasted aluminium and a PBT keycap): nearly flat
+  // colour, no gloss, only a faint edge. The earlier glossy gradient read as glass.
   action: StyleSheet.create({
     up: {
-      borderColor: 'rgba(255,255,255,0.1)',
-      backgroundImage: 'linear-gradient(180deg, #343437, #252527)',
-      boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -5px 9px rgba(0,0,0,0.25), 0 3px 0 #111113, 0 5px 8px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.05)',
+      backgroundImage: 'linear-gradient(180deg, #2D2D30, #29292C)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 3px 0 #111113, 0 5px 8px rgba(0,0,0,0.6)',
     },
     down: {
-      borderColor: 'rgba(255,255,255,0.1)',
-      backgroundImage: 'linear-gradient(180deg, #343437, #252527)',
-      boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -3px 6px rgba(0,0,0,0.3), 0 1px 0 #111113, 0 1px 3px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.05)',
+      backgroundImage: 'linear-gradient(180deg, #2A2A2D, #27272A)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 0 #111113, 0 1px 3px rgba(0,0,0,0.6)',
     },
   }),
   primary: StyleSheet.create({
     up: {
-      borderColor: 'rgba(255,255,255,0.26)',
-      backgroundImage: 'linear-gradient(180deg, #3493FF, #0A84FF)',
-      boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -5px 9px rgba(0,40,110,0.28), 0 3px 0 #0A4FA3, 0 5px 8px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.08)',
+      backgroundImage: 'linear-gradient(180deg, #1A88F7, #1480EE)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 3px 0 #0A4FA3, 0 5px 8px rgba(0,0,0,0.6)',
     },
     down: {
-      borderColor: 'rgba(255,255,255,0.26)',
-      backgroundImage: 'linear-gradient(180deg, #3493FF, #0A84FF)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 0 #0A4FA3, 0 1px 3px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.08)',
+      backgroundImage: 'linear-gradient(180deg, #1683F0, #127BE6)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 0 #0A4FA3, 0 1px 3px rgba(0,0,0,0.6)',
     },
   }),
-  /** Allow with nothing to answer: the mockup's darker blue (K-3). */
+  /** Allow with nothing to answer: the mockup's darker blue, also matte (K-3). */
   primaryUnlit: StyleSheet.create({
     up: {
-      borderColor: 'rgba(255,255,255,0.13)',
-      backgroundImage: 'linear-gradient(180deg, #224B7B, #16365C)',
-      boxShadow:
-        'inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -5px 9px rgba(0,20,60,0.3), 0 3px 0 #0C2748, 0 5px 8px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.05)',
+      backgroundImage: 'linear-gradient(180deg, #1F4573, #1B3F69)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 3px 0 #0C2748, 0 5px 8px rgba(0,0,0,0.6)',
     },
     down: {
-      borderColor: 'rgba(255,255,255,0.13)',
-      backgroundImage: 'linear-gradient(180deg, #224B7B, #16365C)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 0 #0C2748, 0 1px 3px rgba(0,0,0,0.6)',
+      borderColor: 'rgba(255,255,255,0.05)',
+      backgroundImage: 'linear-gradient(180deg, #1D426E, #1A3C64)',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 0 #0C2748, 0 1px 3px rgba(0,0,0,0.6)',
     },
   }),
 };

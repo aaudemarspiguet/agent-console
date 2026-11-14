@@ -173,9 +173,18 @@ Each task is sized to hand to one session. Do them in this order unless the user
   - The type check passes.
 - **Not checked:** the colours through the glass on the phone, and the canvas render itself.
 
-### T7. Decide legends and glyphs (needs the user)
-- **Open question:** on the smaller keys, legend and glyph together look crowded. The last recommendation was words only at 13 points on single-cell keys, and glyph plus word on wide keys. The user has not ruled.
-- **Done when:** the user has chosen, and the mockups, brief (K-2) and app agree.
+### T6d. Matte keyboard finish for the other keys (done 2026-11-13, asked by the user)
+- **Ask:** the keys other than the session keys "shouldn't be glass. They ought to be more like keyboard keys. think mac. so a matted aluminum type or like a mechanical keyboard material". They were never Liquid Glass; their glossy gradient and bright top line read as glass.
+- **Tried, side by side on the deck:** Mac matte; bead-blasted space-grey aluminium (lighter, fine grain, bright top bevel, dark bottom bevel); a PBT mechanical keycap (dark skirt around a smaller dished top face with a rough texture).
+- **Chosen: Mac matte**, for every action key and for Allow in blue (lit and unlit). Values are in `lookStyles` in `src/Key.tsx` and in `.key.solid` and `.key.tint` in `design/mockups/gen-flow.ps1`; the phone boards were regenerated. Brief N-5 updated (version 11).
+- **Checked:** web view and type check. **Not checked:** on the phone.
+
+### T7. Decide legends and glyphs (done 2026-11-13)
+- **Chosen by the user** from a side-by-side of three options (words only; glyphs on wide keys only; glyph and word everywhere at 11 points):
+  - **Legends:** words at 13 points on every action key.
+  - **Glyphs:** only on the wide keys: Deny (cross), Allow (check), Redirect (microphone), Send (up arrow), 15 points, above the word on the same side.
+  - **Hints:** Redirect keeps "hold to talk" in the opposite corner. Always Allow loses "session"; its spoken label still says it.
+- **Where:** `glyph` and `hint` in `src/layout.ts`, drawn by `src/Glyph.tsx` with `react-native-svg` 15.16.0 (in Expo Go, per the SDK 58 docs). Glyph, hint and legend share one ink and dim together when the key is unlit. Mockups: the glyphs on single-cell keys and the 11-point override for the four-row grid were removed from `gen-island.ps1` and `gen-flow.ps1`, and every phone board was regenerated. Brief K-2 updated (version 10).
 
 ### T8. Gate 0 spike: the connection
 - **Do:** G0-1 to G0-3 in the brief. The phone pairs with `apps/agent` over the local network and exchanges encrypted messages; one Claude Code permission request reaches the phone through a hook and an Allow or Deny goes back. Put message shapes in `packages/protocol`.
@@ -217,7 +226,6 @@ The island's open states (session list, request, transcript, results), layout mo
 
 ## Open decisions
 
-- **Legends and glyphs** (T7).
 - **The tray agent's language.** The spike uses Node. The real agent needs a tray icon and Windows console calls; C# does both easily but shares no code with the phone, and the .NET SDK is not installed on this PC.
 - **How far to use console typing** beyond the effort wheel (brief, open decision 5).
 - **Bundle identifier, final name, licence.**
