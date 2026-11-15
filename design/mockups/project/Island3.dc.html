@@ -47,7 +47,9 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 .isl{position:absolute;z-index:4;left:14px;background:#000;overflow:hidden;box-sizing:border-box}
 .isl.shut{width:37px;border-radius:18.5px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between}
 .pe{display:flex;align-items:center;justify-content:center}
-.isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
+.isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
+.isl.open.narrow{width:240px}
+.xv.narrow{padding-right:14px}.narrow .row{gap:8px;padding:0 4px}.narrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.narrow .row img{width:24px!important;height:24px!important}
 .cam{position:absolute;z-index:6;left:25px;top:194px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
 .tap{position:absolute;z-index:7;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.92);background:rgba(255,255,255,.2)}
 .cnum{font-size:15px;line-height:18px;font-weight:600}
@@ -88,7 +90,7 @@ button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparen
 </style>
 </helmet>
 <div class="plate" style="position: relative; width: 874px; height: 402px; overflow: hidden; color: #FFFFFF; font-family: -apple-system, 'SF Pro Text', 'SF Pro Display', Inter, system-ui, sans-serif">
-  <div class="isl open" style="top: 12px; height: 378px; border-radius: 38px">
+  <div class="isl open" style="top: 12px; height: 378px; border-radius: 49.5px">
     <div class="xv">
       <div class="xh"><span class="n">1</span><img src="/_blob/d7ab54a8b06e30381ffe0e33e226ca6b" alt="Claude Code" style="width: 28px; height: 28px; border-radius: 7px; object-fit: contain"><span class="xt"><span class="big">api-server</span><span class="st" style="color: #FF9F0A">Needs Approval</span></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF9F0A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9M12 18.5h.01"/></svg></div>      <span class="xsub">Wants to run a command with Bash</span>
       <div class="box code">npm run db:migrate -- --env production</div>

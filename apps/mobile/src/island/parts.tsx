@@ -99,14 +99,18 @@ export function AgentIcon({ agent, size }: { agent: AgentId; size: number }) {
 
 export const GREY = 'rgba(235,235,245,0.6)';
 
-/** Each state's label, colour and glyph (A-3), as in the session list board. */
+/**
+ * Each state's label, colour and glyph (A-3), as in the session list board. A queued
+ * follow-up adds ", Queued": the longer "Follow-Up Queued" was cut off in the row on the
+ * phone (2026-11-14).
+ */
 export function statusOf(session: Session, pending: boolean) {
   if (pending) return { label: 'Needs Approval', color: '#FF9F0A', glyph: 'bang' as const };
   switch (session.state) {
     case 'running':
-      return { label: session.queued ? 'Running, Follow-Up Queued' : 'Running', color: GREY, glyph: 'arc' as const };
+      return { label: session.queued ? 'Running, Queued' : 'Running', color: GREY, glyph: 'arc' as const };
     case 'thinking':
-      return { label: session.queued ? 'Thinking, Follow-Up Queued' : 'Thinking', color: '#64D2FF', glyph: 'dots' as const };
+      return { label: session.queued ? 'Thinking, Queued' : 'Thinking', color: '#64D2FF', glyph: 'dots' as const };
     case 'finished':
       return { label: 'Finished', color: '#30D158', glyph: 'check' as const };
     case 'error':

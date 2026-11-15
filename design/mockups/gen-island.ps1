@@ -56,7 +56,9 @@ $css = $baseCss + "`n" + @'
 .isl{position:absolute;z-index:4;left:14px;background:#000;overflow:hidden;box-sizing:border-box}
 .isl.shut{width:37px;border-radius:18.5px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between}
 .pe{display:flex;align-items:center;justify-content:center}
-.isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
+.isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
+.isl.open.narrow{width:240px}
+.xv.narrow{padding-right:14px}.narrow .row{gap:8px;padding:0 4px}.narrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.narrow .row img{width:24px!important;height:24px!important}
 .cam{position:absolute;z-index:6;left:25px;top:194px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
 .tap{position:absolute;z-index:7;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.92);background:rgba(255,255,255,.2)}
 .cnum{font-size:15px;line-height:18px;font-weight:600}
@@ -174,8 +176,19 @@ function Shut($top, $bottom, $tall) {
   $e = '<span class="pe" style="height: 41px">'
   return '  <div class="isl shut" style="' + $g + '">' + $e + $top + '</span>' + $e + $bottom + '</span></div>'
 }
+# Option 1 (chosen 2026-11-14): at rest the screen is 240 wide and shows a compact list
+# (no status words, the coloured glyph stays); anything to read widens it to 320.
+function OpenNarrow($inner) {
+  return '  <div class="isl open narrow" style="top: 12px; height: 378px; border-radius: 49.5px">' + "`n" + $inner + "`n" + '  </div>'
+}
+function Narrow($list, $dots) {
+  $n = [regex]::Replace($list, '<span class="st" style="[^"]*">[^<]*</span>', '').Replace('<div class="xv six">', '<div class="xv six narrow">')
+  if (-not $dots) { $n = [regex]::Replace($n, '<span role="img" aria-label="Page 1 of 2, swipe to change"(?s).*?</span></span>', '') }
+  return $n
+}
 function Open($inner, $half) {
-  $g = if ($half) { 'top: 116px; height: 170px; border-radius: 36px' } else { 'top: 12px; height: 378px; border-radius: 38px' }
+  # Full height: corners parallel to the display's 62-point corner, 12.5 points in (62 - 12.5 = 49.5; chosen 2026-11-14).
+  $g = if ($half) { 'top: 116px; height: 170px; border-radius: 36px' } else { 'top: 12px; height: 378px; border-radius: 49.5px' }
   return '  <div class="isl open" style="' + $g + '">' + "`n" + $inner + "`n" + '  </div>'
 }
 
@@ -322,7 +335,7 @@ function BuildI($file, $title, $island, $open, $reqOn, $k1Color, $offKeys, $pres
 '@
   }
   $h = $doc.Replace('@@TITLE@@', $title).Replace('@@CSS@@', $css).Replace('@@ISLAND@@', $island).Replace('@@TAP@@', $tap).Replace('@@WHEEL@@', $wh.TrimEnd()).Replace('@@STRIP@@', $strip.TrimEnd()).Replace('@@GRID@@', $g.Trim()).Replace('@@SHEET@@', $sheet.TrimEnd())
-  $h = $h.Replace('@@LEFT@@', $(if ($open) { '348' } else { '62' }))
+  $h = $h.Replace('@@LEFT@@', $(if ($island.Contains('open narrow')) { '268' } elseif ($open) { '348' } else { '62' }))
   $h = $h.Replace('@@K1GLOW@@', $k1[$k1Color][0]).Replace('@@K1DOT@@', $k1[$k1Color][1])
   foreach ($k in $keys) {
     $c = ''; $w = ''
@@ -343,8 +356,8 @@ $vReply = '    <div class="xv">' + "`n" + $headWork + @'
 '@
 BuildI 'Reply1.dc.html' 'Press a saved reply' (Open $vReply $false) $true $false 'white' $answer @('rep1') '' '' 'on'
 BuildI 'Reply2.dc.html' 'Saved reply queued' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Follow-up queued' 'api-server gets it when its turn ends') $true) $true $false 'white' ($answer + $vox) @('send') '' '' 'on'
-BuildI 'Island1.dc.html' 'At rest' (Open $vList $false) $true $false 'white' ($answer + $vox) $none '' ''
-BuildI 'Island2.dc.html' 'Session list' (Open $vList $false) $true $false 'white' ($answer + $vox) $none '' ''
+BuildI 'Island1.dc.html' 'At rest' (OpenNarrow (Narrow $vList $false)) $true $false 'white' ($answer + $vox) $none '' ''
+BuildI 'Island2.dc.html' 'Session list' (OpenNarrow (Narrow $vList $true)) $true $false 'white' ($answer + $vox) $none '' ''
 BuildI 'Island3.dc.html' 'Request arrives' (Open $vReq $false) $true $true 'amber' $vox $none '' ''
 BuildI 'Island4.dc.html' 'Allowed' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Allowed' 'api-server is running it now') $true) $true $false 'white' ($answer + $vox) @('allow') '' ''
 BuildI 'Island5.dc.html' 'Hold redirect' (Open $vListen $false) $true $true 'amber' ($answer + $vox) @('red') '' ''
@@ -354,7 +367,7 @@ BuildI 'Island8.dc.html' 'Session view' (Open $vSession $false) $true $false 'wh
 BuildI 'Effort1.dc.html' 'Turn the wheel' (Open $vEffort $true) $true $false 'white' ($answer + $vox) $none '' '' 'turn'
 BuildI 'Effort2.dc.html' 'Effort set' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Effort: xhigh' 'api-server, from its next message') $true) $true $false 'white' ($answer + $vox) $none '' '' 'on'
 BuildI 'Effort3.dc.html' 'Effort not changed' (Open (Result 'rgba(255,159,10,.18)' '#FF9F0A' $pBang 'Not changed' 'api-server is still on high') $true) $true $false 'white' ($answer + $vox) $none '' '' 'on'
-BuildI 'Island9.dc.html' 'Hidden request' (Open $vListReq $false) $true $true 'amber' ($answer + $vox) $none '' ''
+BuildI 'Island9.dc.html' 'Hidden request' (OpenNarrow (Narrow $vListReq $false)) $true $true 'amber' ($answer + $vox) $none '' ''
 BuildI 'IslandLayout1.dc.html' 'Layout mode' (Open $vLayout $false) $true $false 'white' $none $none '' 'layout'
 BuildI 'IslandLayout2.dc.html' 'Add a key' (Open $vLayout $false) $true $false 'white' $none $none '' 'sheet'
 BuildI 'IslandPair.dc.html' 'Pairing' (Open $vPair $false) $true $false 'white' $none $none '' 'pair'

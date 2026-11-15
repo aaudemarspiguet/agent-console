@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type LayoutChangeEvent, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Animated, type LayoutChangeEvent, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { KeyId } from '@deck/protocol';
 import { EffortWheel, WHEEL_COLUMN_WIDTH } from './EffortWheel';
@@ -8,7 +8,7 @@ import { COLUMNS, DEFAULT_KEYS, ROWS } from './layout';
 import { StatusStrip } from './PlateParts';
 import { useCameraSide } from './useCameraSide';
 import { EFFORT_LEVELS } from './island/demo';
-import { CUTOUT_WIDTH, Island, KEYS_START, useReduceMotion } from './island/Island';
+import { CUTOUT_WIDTH, Island, KEYS_START_NARROW, KEYS_START_WIDE, useReduceMotion, useScreenMotion } from './island/Island';
 import { island, useIsland } from './island/store';
 import { SCENE_VIEW } from './island/scenes';
 
@@ -50,20 +50,26 @@ export function Deck({ onKeyPress }: DeckProps) {
   const s = useIsland();
   const reduceMotion = useReduceMotion();
   const still = reduceMotion || !!SCENE_VIEW;
+  const motion = useScreenMotion(s, still);
   const lights = island.lights();
   // The plate fills the window. (A Pressable's onLayout never fired on the web.)
   const plate = useWindowDimensions();
   const plateWidth = plate.width;
   const [gridHeight, setGridHeight] = useState(0);
 
-  // The key area starts 348 points from the camera edge, beside the screen, and
-  // stays there: the screen is fixed open (the user, 2026-11-14), so the keys
-  // no longer slide.
-  const cameraPad = Math.max(KEYS_START, insets[cameraSide]);
+  // The key area starts beside the screen: 268 points from the camera edge
+  // while the screen rests narrow, 348 while it is wide. It slides between the
+  // two with the screen (K-7). Each key's left edge and width are straight lines
+  // in the grid's width, so they follow the animated shift without a re-render
+  // on every frame.
+  const cameraPad = Math.max(KEYS_START_NARROW, insets[cameraSide]);
   const wheelPad = Math.max(insets[wheelSide], END_MARGIN);
-  const gridWidth = plateWidth - cameraPad - wheelPad;
-  const cellWidth = (gridWidth - GAP * (COLUMNS - 1)) / COLUMNS;
+  const shiftWide = KEYS_START_WIDE - cameraPad;
+  const shift = motion.wide.interpolate({ inputRange: [0, 1], outputRange: [0, shiftWide] });
+  const narrowGridWidth = plateWidth - cameraPad - wheelPad;
   const cellHeight = (gridHeight - GAP * (ROWS - 1)) / ROWS;
+  const along = (narrow: number, perShift: number) =>
+    motion.wide.interpolate({ inputRange: [0, 1], outputRange: [narrow, narrow + perShift * shiftWide] });
 
   const onGridLayout = (event: LayoutChangeEvent) => setGridHeight(event.nativeEvent.layout.height);
 
@@ -88,7 +94,7 @@ export function Deck({ onKeyPress }: DeckProps) {
       ]}
     >
       <View style={styles.grain} pointerEvents="none" />
-      <Island s={s} side={cameraSide} inset={screenInset(insets[cameraSide])} plateHeight={plate.height} still={still} />
+      <Island s={s} side={cameraSide} inset={screenInset(insets[cameraSide])} plateHeight={plate.height} motion={motion} still={still} />
       <View style={[styles.edge, { [wheelSide]: WHEEL_CENTRE_INSET - WHEEL_COLUMN_WIDTH / 2 }]}>
         <EffortWheel
           active={island.wheelActive()}
@@ -99,7 +105,7 @@ export function Deck({ onKeyPress }: DeckProps) {
         />
       </View>
 
-      <View style={styles.column}>
+      <Animated.View style={[styles.column, { [`margin${cameraSide === 'left' ? 'Left' : 'Right'}`]: shift }]}>
         <StatusStrip linked={lights.linked} requestWaiting={lights.requestWaiting} onLinkLongPress={island.demoNext} />
         <View style={styles.grid} onLayout={onGridLayout}>
           {plateWidth > 0 && gridHeight > 0 &&
@@ -110,9 +116,9 @@ export function Deck({ onKeyPress }: DeckProps) {
                 <Key
                   key={key.id}
                   def={key}
-                  left={key.column * (cellWidth + GAP)}
+                  left={along((key.column * (narrowGridWidth + GAP)) / COLUMNS, -key.column / COLUMNS)}
                   top={key.row * (cellHeight + GAP)}
-                  width={cellWidth * wide + GAP * (wide - 1)}
+                  width={along((wide * (narrowGridWidth - GAP * (COLUMNS - 1))) / COLUMNS + GAP * (wide - 1), -wide / COLUMNS)}
                   height={cellHeight * high + GAP * (high - 1)}
                   light={lights.sessions[key.id]}
                   unlit={lights.unlit.includes(key.id)}
@@ -123,7 +129,7 @@ export function Deck({ onKeyPress }: DeckProps) {
               );
             })}
         </View>
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }

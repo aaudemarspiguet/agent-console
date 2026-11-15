@@ -7,10 +7,14 @@ import type { Side } from '../useCameraSide';
 
 /** Open sizes (mockups): full height for reading, half height for results and effort. */
 export const OPEN_WIDTH = 320;
+/** The resting width, while the screen shows only the session list (option 1, the user, 2026-11-14). */
+export const NARROW_WIDTH = 240;
 export const FULL_HEIGHT = 378;
 export const HALF_HEIGHT = 170;
 
 export const isHalf = (view: IslandView | null) => view === 'result' || view === 'effort';
+/** The screen rests narrow on the list; anything to read widens it. */
+export const isNarrow = (view: IslandView | null) => view === 'list';
 
 interface ViewProps {
   s: IslandState;
@@ -59,7 +63,13 @@ function Foot({ children, right }: { children: string; right?: string }) {
   );
 }
 
-/** Board 2: the session list, one row per number key, a swipe for the next page (A-2, K-5). */
+/**
+ * Boards 1, 2 and 9: the session list, one row per number key, a swipe for the
+ * next page (A-2, K-5). It is shown on the narrow resting screen, so each row is
+ * compact: number, agent icon, project name and the status glyph in its colour;
+ * the status words are left out to keep names on one line (option 1, 2026-11-14),
+ * and stay in the row's spoken label.
+ */
 function List({ s, side, still }: ViewProps) {
   const pages = island.pages();
   const first = s.page * KEYS_PER_PAGE + 1;
@@ -73,7 +83,7 @@ function List({ s, side, still }: ViewProps) {
     }),
   ).current;
   return (
-    <Full side={side}>
+    <View style={[styles.full, pad(side, 54, 14)]}>
       <View style={styles.grow} {...swipe.panHandlers}>
         <Text style={[type.title, styles.listTitle]}>Agents</Text>
         {numbers.map((n) => {
@@ -81,12 +91,13 @@ function List({ s, side, still }: ViewProps) {
           if (!session) {
             // An empty number key, as in the prototype (the user chose it on 2026-11-14).
             return (
-              <View key={n} style={styles.row}>
+              <View key={n} style={[styles.row, styles.compactRow]} accessibilityLabel={`Key ${n}: no session. Start an agent on your PC.`}>
                 <Text style={type.number}>{n}</Text>
                 <View style={styles.placeholder} />
                 <View style={styles.texts}>
-                  <Text style={[type.row, { color: GREY }]}>No session</Text>
-                  <Text style={type.status}>Start an agent on your PC</Text>
+                  <Text style={[type.row, { color: GREY }]} numberOfLines={1}>
+                    No session
+                  </Text>
                 </View>
               </View>
             );
@@ -96,19 +107,16 @@ function List({ s, side, still }: ViewProps) {
           return (
             <Pressable
               key={n}
-              style={styles.row}
+              style={[styles.row, styles.compactRow]}
               onPress={() => island.tapRow(n)}
               accessibilityRole="button"
               accessibilityLabel={`Session ${n}: ${session.project}, ${st.label}`}
             >
               <Text style={type.number}>{n}</Text>
-              <AgentIcon agent={session.agent} size={26} />
+              <AgentIcon agent={session.agent} size={24} />
               <View style={styles.texts}>
                 <Text style={type.row} numberOfLines={1}>
                   {session.project}
-                </Text>
-                <Text style={[type.status, { color: st.color }]} numberOfLines={1}>
-                  {st.label}
                 </Text>
               </View>
               <StatusGlyph session={session} pending={pending} still={still} />
@@ -127,7 +135,7 @@ function List({ s, side, still }: ViewProps) {
           ) : null}
         </View>
       </View>
-    </Full>
+    </View>
   );
 }
 
@@ -366,9 +374,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 12,
   },
+  compactRow: {
+    gap: 8,
+    paddingHorizontal: 4,
+  },
   placeholder: {
-    width: 26,
-    height: 26,
+    width: 24,
+    height: 24,
     borderRadius: 7,
     borderWidth: 1.5,
     borderStyle: 'dashed',

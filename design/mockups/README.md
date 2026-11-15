@@ -28,7 +28,7 @@ The last line it prints must show `left tokens: 0`.
 ## Geometry in use
 
 - Key grid: five columns by four rows, 9-point gaps.
-- Screen: fixed open (chosen 2026-11-14), never a closed pill. Full height 320 by 378, 12 points from top and bottom; half height 320 by 170, centred. It starts 14 points from the camera edge, so its black margin covers the cutout (37 by 125 at y 139). At rest it shows the session list.
+- Screen: fixed open (chosen 2026-11-14), never a closed pill. Full height 320 by 378, 12 points from top and bottom, corner radius 49.5 (parallel to the iPhone 17's reported 62-point display corner; the app draws it as Apple's continuous curve, the boards as a circular arc); half height 320 by 170, centred. It starts 14 points from the camera edge, so its black margin covers the cutout (37 by 125 at y 139). At rest it shows the session list.
 - Camera dot: centred on the cutout's centre, x 32, y 201.
 - Effort wheel: centred top to bottom (top 100).
 - Key area: starts 348 points from the camera edge, beside the screen; ends 62 points from the other edge, where the effort wheel sits.
