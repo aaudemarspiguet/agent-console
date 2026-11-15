@@ -54,7 +54,8 @@ $keys = $keys + 'k5','k6','rep1','rep2'
 
 $css = $baseCss + "`n" + @'
 .isl{position:absolute;z-index:4;left:14px;background:#000;overflow:hidden;box-sizing:border-box}
-.isl.shut{width:37px;border-radius:18.5px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:15px 0}
+.isl.shut{width:37px;border-radius:18.5px;box-shadow:0 0 0 1px rgba(255,255,255,.035);display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+.pe{display:flex;align-items:center;justify-content:center}
 .isl.open{width:320px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 18px 44px rgba(0,0,0,.6)}
 .cam{position:absolute;z-index:6;left:25px;top:194px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#33405F 0,#0D111B 55%,#000 75%);box-shadow:0 0 0 2px #050506}
 .tap{position:absolute;z-index:7;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.92);background:rgba(255,255,255,.2)}
@@ -162,9 +163,16 @@ $stripEdit = @'
 function Svg($d, $sz, $color, $sw) { return '<svg aria-hidden="true" width="' + $sz + '" height="' + $sz + '" viewBox="0 0 24 24" fill="none" stroke="' + $color + '" stroke-width="' + $sw + '" stroke-linecap="round" stroke-linejoin="round"><path d="' + $d + '"/></svg>' }
 $pArc = 'M12 3a9 9 0 1 0 9 9'; $pCheck = 'M5 12.5l4.5 4.5L19 7.5'; $pBang = 'M12 5v9M12 18.5h.01'; $pUp = 'M12 20V5M5 12l7-7 7 7'; $pPause = 'M9 6v12M15 6v12'; $pDots = 'M6 12h.01M12 12h.01M18 12h.01'; $pCross = 'M7 7l10 10M17 7L7 17'
 
+# The closed pill reaches past the 125-point cutout at both ends, as iOS's Live
+# Activities do round the camera: the glyph sits in the end above the camera and the
+# count in the end below, where the screen can show them (chosen 2026-11-14). Sizes
+# measured from Spotify's Live Activity on the iPhone 17: ends of 32.5 points (190
+# in all) in every state, content centred 20.5 points from the outer end.
 function Shut($top, $bottom, $tall) {
-  $g = if ($tall) { 'top: 119px; height: 164px' } else { 'top: 139px; height: 125px' }
-  return '  <div class="isl shut" style="' + $g + '">' + $top + $bottom + '</div>'
+  $h = 190
+  $g = 'top: ' + ((402 - $h) / 2) + 'px; height: ' + $h + 'px'
+  $e = '<span class="pe" style="height: 41px">'
+  return '  <div class="isl shut" style="' + $g + '">' + $e + $top + '</span>' + $e + $bottom + '</span></div>'
 }
 function Open($inner, $half) {
   $g = if ($half) { 'top: 116px; height: 170px; border-radius: 36px' } else { 'top: 12px; height: 378px; border-radius: 38px' }
@@ -196,6 +204,10 @@ $vList = '    <div class="xv six">' + "`n" + '      <span class="big" style="pad
       <div class="foot" style="padding: 0 4px"><span>AMOGH-PC on Wi-Fi</span><span style="flex-grow: 1"></span><span role="img" aria-label="Page 1 of 2, swipe to change" style="display: flex; gap: 5px"><span class="pd" style="background: #FFFFFF"></span><span class="pd"></span></span></div>
     </div>
 '@
+
+# The screen is fixed open (chosen 2026-11-14): at rest it shows the session list,
+# and a hidden request shows as its session's row needing approval.
+$vListReq = $vList.Replace((IRow 1 $blobCC 'Claude Code' 'api-server' 'Running' $grey (Svg $pArc 16 '#FFFFFF' 2.4)), (IRow 1 $blobCC 'Claude Code' 'api-server' 'Needs Approval' '#FF9F0A' (Svg $pBang 18 '#FF9F0A' 2.6)))
 
 $vReq = '    <div class="xv">' + "`n" + $headReq + @'
       <span class="xsub">Wants to run a command with Bash</span>
@@ -331,7 +343,7 @@ $vReply = '    <div class="xv">' + "`n" + $headWork + @'
 '@
 BuildI 'Reply1.dc.html' 'Press a saved reply' (Open $vReply $false) $true $false 'white' $answer @('rep1') '' '' 'on'
 BuildI 'Reply2.dc.html' 'Saved reply queued' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Follow-up queued' 'api-server gets it when its turn ends') $true) $true $false 'white' ($answer + $vox) @('send') '' '' 'on'
-BuildI 'Island1.dc.html' 'At rest' (Shut $spinW $count4 $false) $false $false 'white' ($answer + $vox) $none '' ''
+BuildI 'Island1.dc.html' 'At rest' (Open $vList $false) $true $false 'white' ($answer + $vox) $none '' ''
 BuildI 'Island2.dc.html' 'Session list' (Open $vList $false) $true $false 'white' ($answer + $vox) $none '' ''
 BuildI 'Island3.dc.html' 'Request arrives' (Open $vReq $false) $true $true 'amber' $vox $none '' ''
 BuildI 'Island4.dc.html' 'Allowed' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Allowed' 'api-server is running it now') $true) $true $false 'white' ($answer + $vox) @('allow') '' ''
@@ -342,7 +354,7 @@ BuildI 'Island8.dc.html' 'Session view' (Open $vSession $false) $true $false 'wh
 BuildI 'Effort1.dc.html' 'Turn the wheel' (Open $vEffort $true) $true $false 'white' ($answer + $vox) $none '' '' 'turn'
 BuildI 'Effort2.dc.html' 'Effort set' (Open (Result 'rgba(48,209,88,.18)' '#30D158' $pCheck 'Effort: xhigh' 'api-server, from its next message') $true) $true $false 'white' ($answer + $vox) $none '' '' 'on'
 BuildI 'Effort3.dc.html' 'Effort not changed' (Open (Result 'rgba(255,159,10,.18)' '#FF9F0A' $pBang 'Not changed' 'api-server is still on high') $true) $true $false 'white' ($answer + $vox) $none '' '' 'on'
-BuildI 'Island9.dc.html' 'Hidden request' (Shut $alertDot '<span class="cnum" style="color: #FF9F0A">1</span>' $true) $false $true 'amber' ($answer + $vox) $none '' ''
+BuildI 'Island9.dc.html' 'Hidden request' (Open $vListReq $false) $true $true 'amber' ($answer + $vox) $none '' ''
 BuildI 'IslandLayout1.dc.html' 'Layout mode' (Open $vLayout $false) $true $false 'white' $none $none '' 'layout'
 BuildI 'IslandLayout2.dc.html' 'Add a key' (Open $vLayout $false) $true $false 'white' $none $none '' 'sheet'
 BuildI 'IslandPair.dc.html' 'Pairing' (Open $vPair $false) $true $false 'white' $none $none '' 'pair'

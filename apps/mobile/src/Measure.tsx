@@ -28,7 +28,7 @@ function useOrientationName(): string {
   useEffect(() => {
     let mounted = true;
     const apply = (o: ScreenOrientation.Orientation) => mounted && setName(ORIENTATION_NAMES[o] ?? String(o));
-    void ScreenOrientation.getOrientationAsync().then(apply);
+    ScreenOrientation.getOrientationAsync().then(apply).catch(() => {});
     const sub = ScreenOrientation.addOrientationChangeListener((e) => apply(e.orientationInfo.orientation));
     return () => {
       mounted = false;

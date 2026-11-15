@@ -3,17 +3,6 @@ import { Animated, PanResponder, StyleSheet, View } from 'react-native';
 import { Led, Silk } from './PlateParts';
 import { rawFor, shownFor, WHEEL_FEEL as feel } from './wheelFeel';
 
-/** A demo session's effort levels (E-1). Real sessions report their model's levels. */
-const LEVELS = ['low', 'medium', 'high', 'xhigh', 'max'] as const;
-type Level = (typeof LEVELS)[number];
-
-/**
- * TEMPORARY (T12). Nothing is connected, so the wheel turns through a demo
- * session's levels, starting here. 'off' is the real state with nothing
- * connected: the wheel is unlit and does nothing (E-6).
- */
-const DEMO_EFFORT = 'high' as Level | 'off';
-
 /** Width of the wheel's column: slot, light and label. */
 export const WHEEL_COLUMN_WIDTH = 60;
 
@@ -71,21 +60,34 @@ function ridges(surface: number) {
   return out;
 }
 
+interface EffortWheelProps {
+  /** The wheel will act on the selected session, so its light is on (E-6, K-9). Off, a drag does nothing. */
+  active: boolean;
+  /** The level the wheel sits at, as an index into the session's levels. */
+  level: number;
+  /** How many levels the session's model offers (E-1). */
+  levels: number;
+  /** Each step while turning. */
+  onTurn: (level: number) => void;
+  /** The wheel has settled on a level. */
+  onStop: (level: number) => void;
+}
+
 /**
  * The effort wheel, drawn as hardware on the plate edge (K-9). A vertical drag
  * rolls the cylinder under the finger, one groove per level with a haptic tick,
  * and past either end it resists and springs back with a firmer stop (E-1).
  * Upward turns effort up.
  */
-export function EffortWheel() {
-  const active = DEMO_EFFORT !== 'off';
-  const last = LEVELS.length - 1;
-  const [level, setLevel] = useState(active ? LEVELS.indexOf(DEMO_EFFORT as Level) : 2);
+export function EffortWheel({ active, level, levels, onTurn, onStop }: EffortWheelProps) {
+  const last = levels - 1;
   /** Where the wheel shows, in levels (fractions while turning). */
   const [shown, setShown] = useState(level);
 
   const anim = useRef(new Animated.Value(level)).current;
-  const live = useRef({ feel, level, shown: level, startRaw: 0, tickLevel: level, stopped: false });
+  const live = useRef({ feel, level, shown: level, startRaw: 0, tickLevel: level, stopped: false, dragging: false });
+  const props = useRef({ active, last, onTurn, onStop });
+  props.current = { active, last, onTurn, onStop };
 
   useEffect(() => {
     const id = anim.addListener(({ value }) => {
@@ -95,58 +97,69 @@ export function EffortWheel() {
     return () => anim.removeListener(id);
   }, [anim]);
 
+  // A new session, or a change the PC could not make, moves the wheel to that level.
+  useEffect(() => {
+    const s = live.current;
+    if (s.dragging || level === s.level) return;
+    s.level = level;
+    s.tickLevel = level;
+    Animated.spring(anim, { toValue: level, ...feel.spring, useNativeDriver: false }).start();
+  }, [level, anim]);
+
   const responder = useMemo(
     () =>
       PanResponder.create({
-        onStartShouldSetPanResponder: () => active,
-        onMoveShouldSetPanResponder: () => active,
+        onStartShouldSetPanResponder: () => props.current.active,
+        onMoveShouldSetPanResponder: () => props.current.active,
         onPanResponderTerminationRequest: () => false,
         onPanResponderGrant: () => {
           const s = live.current;
+          const end = props.current.last;
           anim.stopAnimation();
-          s.startRaw = rawFor(s.shown, last, s.feel);
-          s.tickLevel = Math.round(Math.min(last, Math.max(0, s.shown)));
+          s.dragging = true;
+          s.startRaw = rawFor(s.shown, end, s.feel);
+          s.tickLevel = Math.round(Math.min(end, Math.max(0, s.shown)));
           s.stopped = false;
         },
         onPanResponderMove: (_, gesture) => {
           const s = live.current;
+          const end = props.current.last;
           const raw = s.startRaw - gesture.dy / s.feel.stepPts;
-          const nearest = Math.round(Math.min(last, Math.max(0, raw)));
+          const nearest = Math.round(Math.min(end, Math.max(0, raw)));
           if (nearest !== s.tickLevel) {
             s.tickLevel = nearest;
             s.feel.tick();
+            props.current.onTurn(nearest);
           }
-          const overPts = raw < 0 ? -raw * s.feel.stepPts : raw > last ? (raw - last) * s.feel.stepPts : 0;
+          const overPts = raw < 0 ? -raw * s.feel.stepPts : raw > end ? (raw - end) * s.feel.stepPts : 0;
           if (overPts >= s.feel.stopAt && !s.stopped) {
             s.stopped = true;
             s.feel.stop();
           } else if (overPts === 0) {
             s.stopped = false;
           }
-          anim.setValue(shownFor(raw, last, s.feel));
+          anim.setValue(shownFor(raw, end, s.feel));
         },
         onPanResponderRelease: () => settle(),
         onPanResponderTerminate: () => settle(),
       }),
-    // `settle` reads everything through `live`, so the responder never needs remaking.
+    // Everything is read through refs, so the responder never needs remaking.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [active],
+    [],
   );
 
   function settle() {
     const s = live.current;
+    s.dragging = false;
     const target = s.tickLevel;
     Animated.spring(anim, { toValue: target, ...s.feel.spring, useNativeDriver: false }).start();
-    if (target !== s.level) {
-      s.level = target;
-      setLevel(target);
-      // Nothing is connected yet, so the new level is only logged (E-3 to E-7 send it).
-      console.log(`effort wheel: ${LEVELS[target]}`);
-    }
+    s.level = target;
+    props.current.onStop(target);
   }
 
   function step(by: number) {
     const s = live.current;
+    if (!props.current.active) return;
     const target = Math.min(last, Math.max(0, s.level + by));
     if (target === s.level) {
       s.feel.stop();
@@ -154,6 +167,7 @@ export function EffortWheel() {
     }
     s.feel.tick();
     s.tickLevel = target;
+    props.current.onTurn(target);
     settle();
   }
 
@@ -172,7 +186,7 @@ export function EffortWheel() {
         accessibilityRole="adjustable"
         accessibilityLabel="Effort wheel"
         accessibilityState={{ disabled: !active }}
-        accessibilityValue={active ? { text: LEVELS[level] } : undefined}
+        accessibilityValue={active ? { min: 0, max: last, now: level } : undefined}
         accessibilityActions={active ? [{ name: 'increment' }, { name: 'decrement' }] : undefined}
         onAccessibilityAction={(event) => step(event.nativeEvent.actionName === 'increment' ? 1 : -1)}
       >

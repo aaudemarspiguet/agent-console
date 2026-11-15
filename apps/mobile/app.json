@@ -42,7 +42,8 @@
           "microphonePermission": "Deck listens while you hold the Redirect key, to turn your reply into text.",
           "speechRecognitionPermission": "Deck turns your spoken reply into text on this phone."
         }
-      ]
+      ],
+      "expo-widgets"
     ],
     "extra": {
       "eas": {

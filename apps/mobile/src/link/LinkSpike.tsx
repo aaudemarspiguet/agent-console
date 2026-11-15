@@ -33,8 +33,9 @@ export function LinkSpike() {
 
   const startScan = async () => {
     if (!permission?.granted) {
-      const result = await requestPermission();
-      if (!result.granted) return;
+      // A failed permission request must not raise an unhandled rejection.
+      const result = await requestPermission().catch(() => null);
+      if (!result?.granted) return;
     }
     setScanning(true);
   };

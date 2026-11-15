@@ -104,7 +104,8 @@ export function pressDown(travel: Animated.Value): void {
   state.lastPressAt = now;
   state.strength = strength;
 
-  void Haptics.impactAsync(bottomHaptic(strength));
+  // A haptic that fails (none on this device or browser) must not raise an unhandled rejection.
+  Haptics.impactAsync(bottomHaptic(strength)).catch(() => {});
   soundDown(strength);
 
   travel.stopAnimation();
@@ -122,7 +123,7 @@ export function pressUp(travel: Animated.Value): void {
   if (state.topTimer !== undefined) clearTimeout(state.topTimer);
   state.topTimer = setTimeout(() => {
     state.topTimer = undefined;
-    void Haptics.impactAsync(TOP_OUT);
+    Haptics.impactAsync(TOP_OUT).catch(() => {});
     soundUp(strength);
   }, TOP_MS);
 

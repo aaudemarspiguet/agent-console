@@ -48,9 +48,10 @@ export const DEFAULT_KEYS: KeyDef[] = [
   { id: 'allow', legend: 'allow', look: 'primary', column: 3, row: 1, wide: 2, high: 2, legendSide: 'right', glyph: 'check' },
 
   // The two saved replies are examples. The real ones are written on the PC (R-1).
-  { id: 'reply1', legend: 'run tests', spoken: 'Saved reply: run tests', look: 'action', column: 0, row: 2 },
+  // Broken over two lines as on the boards (`run<br>tests`, `always<br>allow`).
+  { id: 'reply1', legend: 'run\ntests', spoken: 'Saved reply: run tests', look: 'action', column: 0, row: 2 },
   { id: 'reply2', legend: 'explain', spoken: 'Saved reply: explain', look: 'action', column: 1, row: 2 },
-  { id: 'alwaysAllow', legend: 'always allow', spoken: 'Always allow for this session', look: 'action', column: 2, row: 2 },
+  { id: 'alwaysAllow', legend: 'always\nallow', spoken: 'Always allow for this session', look: 'action', column: 2, row: 2 },
 
   { id: 'redirect', legend: 'redirect', spoken: 'Redirect, hold to talk', look: 'action', column: 0, row: 3, wide: 2, glyph: 'mic', hint: 'hold to talk' },
   { id: 'cancel', legend: 'cancel', look: 'action', column: 2, row: 3 },

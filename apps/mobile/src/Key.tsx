@@ -20,15 +20,19 @@ const GLOW_SPREAD = 14;
 
 interface KeyProps {
   def: KeyDef;
-  left: number;
+  /** Position and width move as the key area slides aside for the island (K-7). */
+  left: number | Animated.AnimatedInterpolation<number>;
   top: number;
-  width: number;
+  width: number | Animated.AnimatedInterpolation<number>;
   height: number;
   /** The session light on a number key; none means unlit. */
   light?: SessionLight;
   /** The key does nothing right now, so its legend is unlit (K-3). */
   unlit?: boolean;
   onPress: (id: KeyId) => void;
+  /** Finger down and up, for the hold on Redirect (V-1). */
+  onDown?: (id: KeyId) => void;
+  onUp?: (id: KeyId) => void;
 }
 
 /**
@@ -48,15 +52,17 @@ const GLOW = GLASS
   ? { side: 0.28, top: 0.28, bottom: 0.32, spread: 10, strength: 0.7 }
   : { side: 0.2, top: 0.32, bottom: 0.16, spread: GLOW_SPREAD, strength: 1 };
 
-function Glow({ light, width, height }: { light: SessionLight; width: number; height: number }) {
+function Glow({ light, height }: { light: SessionLight; height: number }) {
   const { rgb, glow } = LIGHT_COLOURS[light];
   return (
     <View
       pointerEvents="none"
       style={{
         position: 'absolute',
-        left: width * GLOW.side - GLOW.spread,
-        right: width * GLOW.side - GLOW.spread,
+        // In percent of the well, so the glow follows the key as it narrows.
+        left: `${GLOW.side * 100}%`,
+        right: `${GLOW.side * 100}%`,
+        marginHorizontal: -GLOW.spread,
         top: height * GLOW.top - GLOW.spread,
         bottom: height * GLOW.bottom - GLOW.spread,
         backgroundImage: `radial-gradient(ellipse closest-side, rgba(${rgb},${glow * GLOW.strength}) 35%, rgba(${rgb},0) 100%)`,
@@ -69,7 +75,7 @@ function Glow({ light, width, height }: { light: SessionLight; width: number; he
  * One key: a cap sitting in a recessed well. The cap moves down and the phone
  * gives a haptic on press (K-4). Values match the design boards' key styles.
  */
-export function Key({ def, left, top, width, height, light, unlit = false, onPress }: KeyProps) {
+export function Key({ def, left, top, width, height, light, unlit = false, onPress, onDown, onUp }: KeyProps) {
   const isNumber = def.look === 'number';
   const look = def.look === 'primary' && unlit ? lookStyles.primaryUnlit : lookStyles[def.look];
   const lightColour = light ? `rgb(${LIGHT_COLOURS[light].rgb})` : undefined;
@@ -87,14 +93,20 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
   }, [travel]);
 
   return (
-    <View style={[styles.well, { left, top, width, height }]}>
-      {isNumber && light ? <Glow light={light} width={width} height={height} /> : null}
+    <Animated.View style={[styles.well, { left, top, width, height }]}>
+      {isNumber && light ? <Glow light={light} height={height} /> : null}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={def.spoken ?? def.legend}
         accessibilityState={{ disabled: unlit }}
-        onPressIn={() => pressDown(travel)}
-        onPressOut={() => pressUp(travel)}
+        onPressIn={() => {
+          pressDown(travel);
+          onDown?.(def.id);
+        }}
+        onPressOut={() => {
+          pressUp(travel);
+          onUp?.(def.id);
+        }}
         onPress={() => onPress(def.id)}
         style={styles.press}
       >
@@ -137,7 +149,7 @@ export function Key({ def, left, top, width, height, light, unlit = false, onPre
         )}
         </Animated.View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -180,10 +192,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08))',
   },
+  /** The four-row grid's values on the boards (`.g4 .dot`, `.g4 .num`). */
   dot: {
     position: 'absolute',
-    top: 10,
-    left: 11,
+    top: 8,
+    left: 9,
     width: 6,
     height: 6,
     borderRadius: 3,
@@ -191,8 +204,8 @@ const styles = StyleSheet.create({
   },
   number: {
     color: '#FFFFFF',
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: 20,
+    lineHeight: 24,
     fontWeight: '400',
     letterSpacing: 0.2,
   },

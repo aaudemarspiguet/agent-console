@@ -1,4 +1,4 @@
-import { type StyleProp, StyleSheet, Text, type TextStyle, View } from 'react-native';
+import { Pressable, type StyleProp, StyleSheet, Text, type TextStyle, View } from 'react-native';
 
 /** A small indicator light on the plate. Only lights change outside the island (K-3). */
 export function Led({ color, label }: { color?: string; label: string }) {
@@ -33,33 +33,32 @@ export function Silk({ children, style }: { children: string; style?: StyleProp<
   );
 }
 
-/** The row above the keys: the Link light and the Request light. */
-export function StatusStrip({ linked, requestWaiting }: { linked: boolean; requestWaiting: boolean }) {
+/**
+ * The row above the keys: the Link light and the Request light.
+ * `onLinkLongPress` is a TEMPORARY hidden trigger for the island's demo events (T13).
+ */
+export function StatusStrip({
+  linked,
+  requestWaiting,
+  onLinkLongPress,
+}: {
+  linked: boolean;
+  requestWaiting: boolean;
+  onLinkLongPress?: () => void;
+}) {
   return (
     <View style={styles.strip}>
       <Screw />
-      <Silk>Link</Silk>
-      <Led color={linked ? '#30D158' : undefined} label={linked ? 'Connected to the PC' : 'Not connected'} />
+      <Pressable style={styles.link} onLongPress={onLinkLongPress} delayLongPress={500} hitSlop={8} accessible={false}>
+        <Silk>Link</Silk>
+        <Led color={linked ? '#30D158' : undefined} label={linked ? 'Connected to the PC' : 'Not connected'} />
+      </Pressable>
       <View style={styles.grow} />
       <Silk>Request</Silk>
       <Led color={requestWaiting ? '#FF9F0A' : undefined} label={requestWaiting ? 'A request is waiting' : 'No request'} />
       <Screw />
     </View>
   );
-}
-
-/**
- * Size of the closed island: the iPhone 17's cutout as measured in landscape
- * (docs/HANDOFF.md, T1), so the pill and the cutout show as one shape with no
- * black margin round it.
- */
-export const ISLAND_PILL_WIDTH = 37;
-
-const ISLAND_PILL_LENGTH = 125;
-
-/** The island when closed: a black pill around the camera cutout (K-7). */
-export function IslandPill() {
-  return <View style={styles.pill} accessibilityLabel="Island, closed" />;
 }
 
 const styles = StyleSheet.create({
@@ -71,6 +70,11 @@ const styles = StyleSheet.create({
   },
   grow: {
     flex: 1,
+  },
+  link: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   silk: {
     color: 'rgba(255,255,255,0.6)',
@@ -105,12 +109,5 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(0,0,0,0.75)',
     transform: [{ rotate: '35deg' }],
-  },
-  pill: {
-    width: ISLAND_PILL_WIDTH,
-    height: ISLAND_PILL_LENGTH,
-    borderRadius: ISLAND_PILL_WIDTH / 2,
-    backgroundColor: '#000000',
-    boxShadow: '0 0 0 1px rgba(255,255,255,0.035)',
   },
 });

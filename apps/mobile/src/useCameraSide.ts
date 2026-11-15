@@ -22,7 +22,8 @@ export function useCameraSide(): Side {
       if (orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT) setSide('right');
     };
 
-    void ScreenOrientation.getOrientationAsync().then(apply);
+    // If the orientation cannot be read (the web, for one), keep the default side.
+    ScreenOrientation.getOrientationAsync().then(apply).catch(() => {});
     const subscription = ScreenOrientation.addOrientationChangeListener((event) => {
       apply(event.orientationInfo.orientation);
     });

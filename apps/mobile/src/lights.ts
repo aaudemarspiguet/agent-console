@@ -38,38 +38,3 @@ export const NOTHING_CONNECTED: PlateLights = {
   sessions: {},
   unlit: ['deny', 'allow', 'alwaysAllow', 'cancel', 'send'],
 };
-
-/**
- * TEMPORARY (handoff task T6). Which lights to show while nothing is connected,
- * so the lit states can be seen and compared with the mockups:
- * 'off' is the real state today, 'atRest' copies board "1 · At rest" (1 and 6
- * running, 2 finished, 4 thinking, 5 error, 3 idle), and
- * 'request' copies board "3 · No press" (a request waiting on session 1), and
- * 'states' shows all six states on keys 1 to 6: thinking, running, needs
- * approval, finished, error, idle.
- */
-export const DEMO_LIGHTS = 'atRest' as 'off' | 'atRest' | 'request' | 'states';
-
-const DEMOS: Record<typeof DEMO_LIGHTS, PlateLights> = {
-  off: NOTHING_CONNECTED,
-  atRest: {
-    linked: true,
-    requestWaiting: false,
-    sessions: { session1: 'running', session2: 'finished', session4: 'thinking', session5: 'error', session6: 'running' },
-    unlit: ['deny', 'allow', 'alwaysAllow', 'cancel', 'send'],
-  },
-  request: {
-    linked: true,
-    requestWaiting: true,
-    sessions: { session1: 'approval', session2: 'finished', session4: 'thinking', session5: 'error', session6: 'running' },
-    unlit: ['cancel', 'send'],
-  },
-  states: {
-    linked: true,
-    requestWaiting: true,
-    sessions: { session1: 'thinking', session2: 'running', session3: 'approval', session4: 'finished', session5: 'error' },
-    unlit: ['cancel', 'send'],
-  },
-};
-
-export const SHOWN_LIGHTS = DEMOS[DEMO_LIGHTS];

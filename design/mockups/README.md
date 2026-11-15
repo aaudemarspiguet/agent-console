@@ -28,10 +28,10 @@ The last line it prints must show `left tokens: 0`.
 ## Geometry in use
 
 - Key grid: five columns by four rows, 9-point gaps.
-- Island closed: a pill 37 by 125 at x 14, y 139, the iPhone 17's measured cutout; the hidden-request pill is 37 by 164, centred on the same line. Open: 320 by 378, 12 points from top and bottom. Half height: 320 by 170, centred. All start 14 points from the camera edge.
+- Screen: fixed open (chosen 2026-11-14), never a closed pill. Full height 320 by 378, 12 points from top and bottom; half height 320 by 170, centred. It starts 14 points from the camera edge, so its black margin covers the cutout (37 by 125 at y 139). At rest it shows the session list.
 - Camera dot: centred on the cutout's centre, x 32, y 201.
 - Effort wheel: centred top to bottom (top 100).
-- Key area: starts 62 points from the camera edge when the island is closed and 348 when it is open; ends 62 points from the other edge, where the effort wheel sits.
+- Key area: starts 348 points from the camera edge, beside the screen; ends 62 points from the other edge, where the effort wheel sits.
 
 ## Publish to the canvas
 

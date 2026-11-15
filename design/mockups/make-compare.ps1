@@ -54,18 +54,20 @@ $index = @'
 <body>
 <div class="bar">
   <label>Board <select id="board">@@OPTIONS@@</select></label>
-  <span>Mockup 874 x 402 (top) | App 874 x 402 at http://localhost:8090 (bottom)</span>
+  <span>Mockup 874 x 402 (top) | App 874 x 402 at http://localhost:8090/?scene=board (bottom)</span>
 </div>
 <div class="lbl">Mockup</div>
 <iframe id="mock" width="874" height="402"></iframe>
 <div class="lbl">App (web view; not iOS)</div>
-<iframe id="app" src="http://localhost:8090" width="874" height="402"></iframe>
+<iframe id="app" width="874" height="402"></iframe>
 <script>
   var sel = document.getElementById('board');
   var mock = document.getElementById('mock');
   var q = new URLSearchParams(location.search).get('board');
   if (q) sel.value = q;
-  function show() { mock.src = sel.value + '.html'; history.replaceState(null, '', '?board=' + sel.value); }
+  var app = document.getElementById('app');
+  // ?scene= puts the app into the same state as the board (apps/mobile/src/island/scenes.ts).
+  function show() { mock.src = sel.value + '.html'; app.src = 'http://localhost:8090/?scene=' + sel.value; history.replaceState(null, '', '?board=' + sel.value); }
   sel.onchange = show;
   show();
 </script>

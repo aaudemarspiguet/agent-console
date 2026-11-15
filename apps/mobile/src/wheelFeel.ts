@@ -34,7 +34,10 @@ export interface WheelFeel {
   spring: { stiffness: number; damping: number; mass: number };
 }
 
-const impact = (style: Haptics.ImpactFeedbackStyle) => () => void Haptics.impactAsync(style);
+/** A haptic that fails (none on this device or browser) must not raise an unhandled rejection. */
+const impact = (style: Haptics.ImpactFeedbackStyle) => () => {
+  Haptics.impactAsync(style).catch(() => {});
+};
 
 /**
  * The chosen feel, "C notch" (the user, 2026-11-14, by feel on the phone, from
