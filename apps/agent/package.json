@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "linkcheck": "tsx src/linkcheck.ts"
+    "linkcheck": "tsx src/linkcheck.ts",
+    "watch": "tsx src/watch.ts"
   },
   "dependencies": {
     "@deck/protocol": "workspace:*",

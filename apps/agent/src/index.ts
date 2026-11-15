@@ -7,14 +7,19 @@
 //   two hellos is encrypted (packages/protocol/src/secure.ts).
 // - Hooks: an HTTP server on 127.0.0.1 only (port 8766) that Claude Code's `http`
 //   hooks call. A PermissionRequest is held open until the phone answers; a Stop hook
-//   hands over a follow-up the phone queued.
+//   hands over a follow-up the phone queued. Every hook also feeds the session list
+//   (sessions.ts; handoff T14).
+// - `--install-hooks` and `--remove-hooks` add and remove Deck's hooks in Claude Code's
+//   user settings, then exit (hooks.ts; brief A-1).
 import { randomBytes as nodeRandomBytes, randomUUID } from 'node:crypto';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, watchFile, writeFileSync } from 'node:fs';
 import { homedir, hostname, networkInterfaces } from 'node:os';
 import { join } from 'node:path';
 import { WebSocketServer, type WebSocket } from 'ws';
 import qrcode from 'qrcode-terminal';
+import { runHookCommand } from './hooks.js';
+import { Sessions } from './sessions.js';
 import {
   PROTOCOL_VERSION,
   SecureChannel,
@@ -27,7 +32,12 @@ import {
   type Pairing,
   type PermissionRequest,
   type PhoneMessage,
+  type SavedReplies,
+  type SessionInfo,
 } from '@deck/protocol';
+
+// `--install-hooks`, `--remove-hooks`: change the settings file and exit.
+if (await runHookCommand(process.argv.slice(2))) process.exit(0);
 
 const LINK_PORT = Number(process.env.DECK_LINK_PORT ?? 8765);
 const HOOK_PORT = Number(process.env.DECK_HOOK_PORT ?? 8766);
@@ -143,7 +153,14 @@ links.on('connection', (socket, req) => {
       }
       phone = { socket, channel, phoneId };
       log(`Phone ${phoneId.slice(0, 8)} linked from ${from}.`);
-      send({ t: 'ready', pcName: hostname(), waiting: [...pending.values()].map((p) => p.request) });
+      send({
+        t: 'ready',
+        pcName: hostname(),
+        sessions: sessions.list(),
+        waiting: [...pending.values()].map((p) => p.request),
+        followups: [...followups].map(([sessionId, text]) => ({ sessionId, text })),
+        replies: savedReplies,
+      });
     }
     onPhoneMessage(message);
   });
@@ -165,11 +182,20 @@ function onPhoneMessage(message: PhoneMessage) {
     case 'answer': {
       const waiting = pending.get(message.id);
       if (!waiting) return log(`Answer for ${message.id.slice(0, 8)}, which is no longer waiting.`);
+      const always = message.decision === 'allow' && message.always === true;
       const decision =
         message.decision === 'allow'
-          ? { behavior: 'allow' }
+          ? always
+            ? { behavior: 'allow', updatedPermissions: sessionRules(waiting) }
+            : { behavior: 'allow' }
           : { behavior: 'deny', message: message.message, interrupt: message.interrupt };
-      log(`Phone: ${message.decision}${message.message ? ` "${message.message}"` : ''} for ${waiting.request.tool}.`);
+      if (always) {
+        log(`  Claude Code suggested: ${JSON.stringify(waiting.suggestions)}`);
+        log(`  rules sent: ${JSON.stringify((decision as { updatedPermissions?: unknown }).updatedPermissions)}`);
+      }
+      log(
+        `Phone: ${always ? 'always allow (this session)' : message.decision}${message.message ? ` "${message.message}"` : ''} for ${waiting.request.tool}.`,
+      );
       waiting.finish({ hookSpecificOutput: { hookEventName: 'PermissionRequest', decision } });
       break;
     }
@@ -177,13 +203,58 @@ function onPhoneMessage(message: PhoneMessage) {
       followups.set(message.sessionId, message.text);
       log(`Follow-up queued for session ${message.sessionId.slice(0, 8)}: "${message.text}"`);
       break;
+    case 'cancelFollowup':
+      if (followups.delete(message.sessionId)) log(`Follow-up for session ${message.sessionId.slice(0, 8)} cancelled from the phone.`);
+      break;
+    case 'seen':
+      sessions.seen(message.sessionId);
+      break;
   }
 }
+
+// ---------- Saved replies (R-1) ----------
+
+// Written on the PC. Until the tray agent's window has its Saved Replies section,
+// they live in ~/.deck/replies.json, created with these two on first run; an edit
+// reaches the phone within a second or two.
+const REPLIES_FILE = join(homedir(), '.deck', 'replies.json');
+const DEFAULT_REPLIES: SavedReplies = {
+  reply1: 'Run the tests and fix any failures.',
+  reply2: 'Explain what you are about to do and why, then wait.',
+};
+
+function loadReplies(): SavedReplies {
+  try {
+    const r = JSON.parse(readFileSync(REPLIES_FILE, 'utf8'));
+    return {
+      reply1: typeof r.reply1 === 'string' && r.reply1.trim() ? r.reply1.trim() : DEFAULT_REPLIES.reply1,
+      reply2: typeof r.reply2 === 'string' && r.reply2.trim() ? r.reply2.trim() : DEFAULT_REPLIES.reply2,
+    };
+  } catch (e) {
+    if (existsSync(REPLIES_FILE)) log(`Could not read ${REPLIES_FILE} (${(e as Error).message}); using the defaults.`);
+    return DEFAULT_REPLIES;
+  }
+}
+
+if (!existsSync(REPLIES_FILE)) {
+  mkdirSync(join(homedir(), '.deck'), { recursive: true });
+  writeFileSync(REPLIES_FILE, JSON.stringify(DEFAULT_REPLIES, null, 2) + '\n');
+}
+let savedReplies = loadReplies();
+watchFile(REPLIES_FILE, { interval: 1000 }, () => {
+  const next = loadReplies();
+  if (JSON.stringify(next) === JSON.stringify(savedReplies)) return;
+  savedReplies = next;
+  log(`Saved replies changed: 1 "${next.reply1}", 2 "${next.reply2}".`);
+  send({ t: 'replies', replies: next });
+}).unref();
 
 // ---------- Claude Code hooks ----------
 
 interface Waiting {
   request: PermissionRequest;
+  /** What Claude Code offered as "don't ask again" (permission_suggestions), if anything. */
+  suggestions: unknown[];
   finish: (body: object | null) => void;
   /** The person answered in the terminal; tell the phone and let go of the hook. */
   answeredElsewhere: () => void;
@@ -191,6 +262,63 @@ interface Waiting {
 
 const pending = new Map<string, Waiting>();
 const followups = new Map<string, string>();
+
+/**
+ * Always Allow, this session only (A-4): Claude Code's own suggestions, moved to the
+ * "session" destination (in memory, gone when the session ends). Kept: addRules, and
+ * addDirectories, which Claude Code offers instead of a rule when the call writes to
+ * a folder it has not allowed (seen on the phone 2026-11-14: `echo x >> log.txt`
+ * asked again after an Always Allow that sent only a command rule). Left out:
+ * setMode, which would change the whole session's permission mode. Without a rule
+ * suggestion, a rule for this tool is added, narrowed to the exact command for Bash.
+ */
+function sessionRules(waiting: Waiting): object[] {
+  const rules = waiting.suggestions
+    .filter((x: any) => x && x.type === 'addRules' && Array.isArray(x.rules) && x.rules.length > 0)
+    .map((x: any) => ({ type: 'addRules', rules: x.rules, behavior: 'allow', destination: 'session' }));
+  const folders = waiting.suggestions
+    .filter((x: any) => x && x.type === 'addDirectories' && Array.isArray(x.directories) && x.directories.length > 0)
+    .map((x: any) => ({ type: 'addDirectories', directories: x.directories, destination: 'session' }));
+  if (rules.length > 0) return [...rules, ...folders];
+  return [...fallbackRule(waiting), ...folders];
+}
+
+function fallbackRule(waiting: Waiting): object[] {
+  const r = waiting.request;
+  const rule = r.tool === 'Bash' ? { toolName: 'Bash', ruleContent: r.summary } : { toolName: r.tool };
+  return [{ type: 'addRules', rules: [rule], behavior: 'allow', destination: 'session' }];
+}
+
+// ---------- Sessions ----------
+
+/** What was last logged for each session, so the log shows changes only. */
+const logged = new Map<string, string>();
+
+const sessions = new Sessions(
+  {
+    changed(session: SessionInfo) {
+      const line = `${session.state}${session.effort ? `, effort ${session.effort}` : ''}${session.tools.length ? ` | ${session.tools.join(' | ')}` : ''}`;
+      // Every hook updates lastSeen; the phone hears only of changes it would show.
+      const shown = `${session.key} ${session.project} ${line}`;
+      if (logged.get(session.id) === shown) return;
+      logged.set(session.id, shown);
+      log(`  [${session.key}] ${session.project}: ${line}`);
+      send({ t: 'session', session });
+    },
+    gone(id: string) {
+      logged.delete(id);
+      followups.delete(id);
+      for (const waiting of [...pending.values()]) if (waiting.request.sessionId === id) waiting.answeredElsewhere();
+      send({ t: 'sessionGone', id });
+    },
+    interrupted(id: string) {
+      clearSession(id, 'interrupt in the transcript');
+    },
+    log,
+  },
+  (sessionId) => [...pending.values()].some((w) => w.request.sessionId === sessionId),
+  (tool, input) => summarise(tool, input),
+);
 
 function summarise(tool: string, input: Record<string, unknown> | undefined): string {
   if (!input) return tool;
@@ -228,6 +356,7 @@ function reply(res: ServerResponse, body: object | null) {
 
 async function onPermissionRequest(req: IncomingMessage, res: ServerResponse) {
   const input = await readBody(req);
+  sessions.onHook(input, req.socket.remotePort);
   const request: PermissionRequest = {
     id: randomUUID(),
     sessionId: String(input.session_id ?? ''),
@@ -251,6 +380,7 @@ async function onPermissionRequest(req: IncomingMessage, res: ServerResponse) {
     pending.delete(request.id);
     if (how) send({ t: 'resolved', id: request.id, how });
     if (!res.writableEnded && !res.destroyed) reply(res, body);
+    sessions.touch(request.sessionId);
   };
   const timer = setTimeout(() => {
     log(`  held ${HOLD_SECONDS} s with no answer; returning no decision.`);
@@ -267,12 +397,15 @@ async function onPermissionRequest(req: IncomingMessage, res: ServerResponse) {
     }
   });
 
+  if (process.env.DECK_DEBUG_SUGGESTIONS) log(`  suggestions: ${JSON.stringify(input.permission_suggestions ?? null)}`);
   pending.set(request.id, {
     request,
+    suggestions: Array.isArray(input.permission_suggestions) ? input.permission_suggestions : [],
     finish: (body) => finish(body),
     answeredElsewhere: () => finish(null, 'answered'),
   });
   send({ t: 'request', request });
+  sessions.touch(request.sessionId);
 }
 
 /**
@@ -300,9 +433,12 @@ async function onSessionEvent(req: IncomingMessage, res: ServerResponse) {
   if (event === 'PostToolUse' || event === 'PostToolUseFailure') {
     const tool = String(input.tool_name ?? '');
     clearSession(sessionId, event, { tool, summary: summarise(tool, input.tool_input) });
-  } else {
+  } else if (['UserPromptSubmit', 'StopFailure', 'SessionEnd'].includes(event)) {
+    // The turn is over or a new one began: whatever waited in this session is over.
+    // (PreToolUse, SessionStart and Notification say nothing about a waiting request.)
     clearSession(sessionId, event);
   }
+  sessions.onHook(input, req.socket.remotePort);
   reply(res, null);
 }
 
@@ -310,6 +446,7 @@ async function onStop(req: IncomingMessage, res: ServerResponse) {
   const input = await readBody(req);
   const sessionId = String(input.session_id ?? '');
   clearSession(sessionId, 'Stop');
+  sessions.onHook(input, req.socket.remotePort);
   const text = followups.get(sessionId);
   log(`Stop from session ${sessionId.slice(0, 8)}${input.stop_hook_active ? ' (already continuing)' : ''}.`);
   if (text && !input.stop_hook_active) {

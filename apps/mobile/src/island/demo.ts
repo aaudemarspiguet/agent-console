@@ -1,8 +1,8 @@
 /**
  * TEMPORARY (handoff T13). Fake sessions and events matching the design boards,
  * so every island state can be reached on the phone before the island is wired
- * to the PC link (A-1 to A-3, Release 2). Remove with the switch in
- * `useIsland.ts` once real sessions arrive.
+ * to the PC link (A-1 to A-3, Release 2). Since T15 the island runs on the PC
+ * link; `SOURCE` in `source.ts` switches back to this for design work.
  */
 
 export type AgentId = 'claudeCode' | 'codex' | 'cursor' | 'gemini';
@@ -11,6 +11,8 @@ export type AgentId = 'claudeCode' | 'codex' | 'cursor' | 'gemini';
 export type SessionState = 'running' | 'thinking' | 'finished' | 'error' | 'idle';
 
 export interface Session {
+  /** The agent's own session id (live sessions only). */
+  id?: string;
   project: string;
   agent: AgentId;
   state: SessionState;
@@ -30,7 +32,9 @@ export interface Request {
   verb: string;
   body: string;
   /** What the demo "hears" when the user replies to this request. */
-  reply: string;
+  reply?: string;
+  /** The PC's id for it (live requests only). */
+  remoteId?: string;
 }
 
 export const AGENT_NAMES: Record<AgentId, string> = {

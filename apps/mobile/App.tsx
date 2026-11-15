@@ -2,20 +2,19 @@ import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useKeepAwake } from 'expo-keep-awake';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { PROTOCOL_VERSION } from '@deck/protocol';
 import { Deck } from './src/Deck';
 import { Measure } from './src/Measure';
 import { Materials } from './src/materials/Materials';
-import { LinkSpike } from './src/link/LinkSpike';
+import { startLive } from './src/link/live';
 import { startLiveActivity } from './src/liveActivity';
 
 /**
  * Which screen to show. 'deck' is the app. 'measure' is the measuring screen from
  * handoff task T1, for measuring another phone. 'materials' is the key
- * material samples from T5, kept as a record (src/materials/README.md). 'link' is
- * the connection test screen from T8 (src/link/LinkSpike.tsx).
+ * material samples from T5, kept as a record (src/materials/README.md). The T8
+ * link test screen is gone: since T15 the deck pairs and links itself.
  */
-const SCREEN = 'deck' as 'deck' | 'measure' | 'materials' | 'link';
+const SCREEN = 'deck' as 'deck' | 'measure' | 'materials';
 
 export default function App() {
   // The screen stays awake while the deck is open. P-2 narrows this to "while connected"
@@ -27,23 +26,18 @@ export default function App() {
   // The real Dynamic Island and Lock Screen, while Deck is not on screen (K-12).
   // Does nothing on the web or in a build without expo-widgets' native code.
   useEffect(() => (SCREEN === 'deck' ? startLiveActivity() : undefined), []);
+  // The PC link: pairing, sessions and requests (handoff T15).
+  useEffect(() => (SCREEN === 'deck' ? startLive() : undefined), []);
 
   return (
     <SafeAreaProvider>
       <StatusBar hidden />
-      {SCREEN === 'link' ? (
-        <LinkSpike />
-      ) : SCREEN === 'measure' ? (
+      {SCREEN === 'measure' ? (
         <Measure />
       ) : SCREEN === 'materials' ? (
         <Materials />
       ) : (
-        <Deck
-          onKeyPress={(id) => {
-            // Nothing is connected yet, so a press is only logged.
-            console.log(`key ${id} (protocol ${PROTOCOL_VERSION})`);
-          }}
-        />
+        <Deck />
       )}
     </SafeAreaProvider>
   );

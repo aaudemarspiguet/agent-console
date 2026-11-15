@@ -1,6 +1,8 @@
-import { useRef } from 'react';
-import { PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { AGENT_NAMES, EFFORT_LEVELS, PC_NAME } from './demo';
+import { useEffect, useRef } from 'react';
+import { PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { parsePairing } from '../link/client';
+import { AGENT_NAMES, EFFORT_LEVELS } from './demo';
 import { AgentIcon, Badge, Caret, GREY, PulseDot, StatusGlyph, statusOf, type } from './parts';
 import { island, KEYS_PER_PAGE, type IslandState, type View as IslandView } from './store';
 import type { Side } from '../useCameraSide';
@@ -125,7 +127,7 @@ function List({ s, side, still }: ViewProps) {
         })}
         <View style={styles.grow} />
         <View style={[styles.foot, { paddingTop: 0 }]}>
-          <Text style={[type.foot, styles.grow]}>{`${PC_NAME} on Wi-Fi`}</Text>
+          <Text style={[type.foot, styles.grow]}>{island.pcLabel()}</Text>
           {pages > 1 ? (
             <View style={styles.dots} accessibilityRole="image" accessibilityLabel={`Page ${s.page + 1} of ${pages}, swipe to change`}>
               {Array.from({ length: pages }, (_, i) => (
@@ -136,6 +138,46 @@ function List({ s, side, still }: ViewProps) {
         </View>
       </View>
     </View>
+  );
+}
+
+/**
+ * Board IslandPair: pairing with the PC (C-1). The text is the board's; the
+ * camera's view fills the space under it, and the first Deck code it sees pairs.
+ * The PC side today is `pnpm agent`, which prints the code in its terminal (the
+ * tray agent's "Pair a Phone" comes later).
+ */
+function Pair({ side }: ViewProps) {
+  const [permission, requestPermission] = useCameraPermissions();
+  const asked = useRef(false);
+  useEffect(() => {
+    if (Platform.OS === 'web' || !permission || permission.granted || asked.current || !permission.canAskAgain) return;
+    asked.current = true;
+    // A failed request must not raise an unhandled rejection.
+    requestPermission().catch(() => null);
+  }, [permission, requestPermission]);
+  const denied = permission && !permission.granted && !permission.canAskAgain;
+  return (
+    <Full side={side}>
+      <Text style={[type.title, styles.pairTitle]}>Pair With Your PC</Text>
+      <Text style={[type.sub, styles.pairLine]}>Open Deck on your PC and choose Pair a Phone.</Text>
+      <Text style={[type.sub, styles.pairLine]}>{"Point this phone at the code on the PC's screen."}</Text>
+      <Text style={[type.sub, styles.pairLine, { color: GREY }]}>Both must be on the same Wi-Fi network. You do this once.</Text>
+      <View style={[styles.box, styles.camera]}>
+        {permission?.granted && Platform.OS !== 'web' ? (
+          <CameraView
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+            onBarcodeScanned={({ data }) => {
+              const pairing = parsePairing(data);
+              if (pairing) island.scanned(pairing);
+            }}
+          />
+        ) : null}
+      </View>
+      <Foot>{denied ? 'Deck needs the camera. Allow it in Settings.' : 'Looking for a code'}</Foot>
+    </Full>
   );
 }
 
@@ -215,7 +257,7 @@ function SessionView({ s, side, still }: ViewProps) {
   return (
     <Full side={side}>
       <Header s={s} n={n} still={still} />
-      <Text style={[type.sub, styles.sub]}>{`${AGENT_NAMES[session.agent]} on ${PC_NAME}. Recent tool calls:`}</Text>
+      <Text style={[type.sub, styles.sub]}>{`${AGENT_NAMES[session.agent]} on ${s.pcName || 'the PC'}. Recent tool calls:`}</Text>
       <View style={[styles.box, styles.boxInner, styles.calls]}>
         {session.log.slice(-3).map((line, i) => (
           <Text key={i} style={[type.code, styles.call]}>
@@ -283,6 +325,8 @@ function CardView({ s, side }: ViewProps) {
 
 export function OpenView({ view, ...props }: ViewProps & { view: IslandView }) {
   switch (view) {
+    case 'pair':
+      return <Pair {...props} />;
     case 'list':
       return <List {...props} />;
     case 'request':
@@ -361,6 +405,21 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingTop: 10,
     paddingHorizontal: 4,
+  },
+  pairTitle: {
+    paddingHorizontal: 4,
+    paddingBottom: 10,
+  },
+  /** The board's paragraphs: white, 9 points apart. */
+  pairLine: {
+    color: '#FFFFFF',
+    paddingHorizontal: 4,
+    paddingBottom: 9,
+  },
+  camera: {
+    marginTop: 6,
+    overflow: 'hidden',
+    backgroundColor: '#000000',
   },
   listTitle: {
     paddingHorizontal: 8,

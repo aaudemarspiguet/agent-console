@@ -43,7 +43,8 @@
           "speechRecognitionPermission": "Deck turns your spoken reply into text on this phone."
         }
       ],
-      "expo-widgets"
+      "expo-widgets",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

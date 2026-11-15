@@ -10,7 +10,8 @@ A free iPhone deck for coding agents, with a tray agent on the Windows PC.
 ## Layout
 
 - `apps/mobile`: the phone app (Expo SDK 58, React Native, TypeScript).
-- `apps/agent`: the PC side (Node, TypeScript). A stub today.
+- `apps/agent`: the PC side (Node, TypeScript): the phone link, the hooks, the session list. Saved replies live in `~/.deck/replies.json` until the tray window exists.
+- The deck runs on the PC link; `SOURCE` in `apps/mobile/src/island/source.ts` switches it to the demo sessions for design work (or `?demo` on the web).
 - `packages/protocol`: types shared by both.
 - `design/mockups`: the design boards and their generators. The visual target for the app.
 - `spike/console-typing`: test scripts for the effort wheel's route. They type into real sessions; read the README before running anything.
@@ -21,6 +22,8 @@ A free iPhone deck for coding agents, with a tray agent on the Windows PC.
 - Phone app in Expo Go: `pnpm --filter mobile go`
 - Type check everything: `pnpm typecheck`
 - PC script: `pnpm agent`
+- Deck's hooks in `~/.claude/settings.json`: `pnpm agent --install-hooks` or `--remove-hooks`; add `--dry-run` to see the diff only. Ask the user before writing their real file.
+- A stand-in phone for testing the agent: `pnpm --filter agent watch`
 - Add an Expo library: `pnpm exec expo install <package>`, run inside `apps/mobile`
 
 ## Rules

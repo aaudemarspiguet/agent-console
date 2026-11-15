@@ -11,6 +11,7 @@ import { EFFORT_LEVELS } from './island/demo';
 import { CUTOUT_WIDTH, Island, KEYS_START_NARROW, KEYS_START_WIDE, useReduceMotion, useScreenMotion } from './island/Island';
 import { island, useIsland } from './island/store';
 import { SCENE_VIEW } from './island/scenes';
+import { SOURCE } from './island/source';
 
 const GAP = 9;
 /** Room kept at the wheel's end of the plate, and the least kept at the camera's end. */
@@ -31,16 +32,12 @@ function screenInset(cameraEdgeInset: number): number {
   return cameraEdgeInset / 2 + 1 - CUTOUT_WIDTH / 2;
 }
 
-interface DeckProps {
-  onKeyPress: (id: KeyId) => void;
-}
-
 /**
- * The plate: status strip, key grid, island and effort wheel. Nothing is
- * connected yet, so the island runs on the demo sessions in `island/demo.ts`
- * (temporary, T13): a long press on the Link light makes the next demo event.
+ * The plate: status strip, key grid, island and effort wheel. The island runs
+ * on the PC link (T15); with the demo switched on (`island/source.ts`), a long
+ * press on the Link light makes the next demo event.
  */
-export function Deck({ onKeyPress }: DeckProps) {
+export function Deck() {
   // On the web, `?scene=` swaps in the phone's insets and camera side (scenes.ts).
   const safeInsets = useSafeAreaInsets();
   const phoneSide = useCameraSide();
@@ -75,7 +72,6 @@ export function Deck({ onKeyPress }: DeckProps) {
 
   const press = (id: KeyId) => {
     island.pressKey(id);
-    onKeyPress(id);
   };
 
   return (
@@ -106,7 +102,7 @@ export function Deck({ onKeyPress }: DeckProps) {
       </View>
 
       <Animated.View style={[styles.column, { [`margin${cameraSide === 'left' ? 'Left' : 'Right'}`]: shift }]}>
-        <StatusStrip linked={lights.linked} requestWaiting={lights.requestWaiting} onLinkLongPress={island.demoNext} />
+        <StatusStrip linked={lights.linked} requestWaiting={lights.requestWaiting} onLinkLongPress={SOURCE === 'demo' ? island.demoNext : undefined} />
         <View style={styles.grid} onLayout={onGridLayout}>
           {plateWidth > 0 && gridHeight > 0 &&
             DEFAULT_KEYS.map((key) => {
