@@ -534,8 +534,38 @@ Each task is sized to hand to one session. Do them in this order unless the user
 - **Not checked yet:** the compact and minimal views and the Lock Screen banner; a request with the Deny and Allow buttons, and whether a press reaches Deck in the background; the stale state after Deck has been suspended for 45 seconds; tapping to open Deck; the press feel on the in-app pill; the earlier T13 fixes (island position, legends) on the phone.
 - **Open:** keeping the Live Activity current while Deck is suspended needs pushes from the PC agent (APNs, a key from the user's Apple account, `enablePushNotifications` in the plugin). Not built.
 
+### Road to dogfooding (planned 2026-11-14, asked by the user)
+The user wants to use Deck daily while it is being built. T14 and T15 make that possible (seeing sessions, answering requests from the phone, saved replies); T16 to T18 follow once it is in use. **Where things stand:** the T8 link proves pairing, the encrypted connection, Allow and Deny, and queued follow-ups, but the PC agent knows only permission requests (`request`, `resolved`, `followupSent` in `packages/protocol/src/messages.ts`): it tracks no sessions. The deck runs on the demo data (`apps/mobile/src/island/demo.ts`), and pairing exists only on the T8 test screen (`src/link/LinkSpike.tsx`), forgotten at every launch. **Dogfooding will mean at first:** `pnpm agent` running on the PC; the phone open on Deck on the same Wi-Fi; the terminal's own prompt still showing beside the phone, whichever answers first winning (T8).
+
+### T14. PC agent: sessions and the hook installer (planned; do first)
+- **Goal:** the agent knows every Claude Code session on the PC and tells the phone, and every session reports to it without hand-editing settings.
+- **Do:**
+  - **Track sessions from their hooks** (`apps/agent/src/index.ts`, which already receives PermissionRequest, PreToolUse and PostToolUse, PostToolUseFailure, Stop and other events at `/hooks/...`): for each `session_id`, the project folder name from `cwd` (A-2), the state of brief A-3 (running between PreToolUse and PostToolUse; thinking for the rest of a turn; needs approval while a request waits; finished on Stop; error on StopFailure; idle otherwise), the last three tool calls as "Tool: target" (A-14), and `effort.level` where the hook carries it (T9: PreToolUse, PostToolUse, Stop). Add the hooks this needs (UserPromptSubmit, StopFailure, SessionStart, SessionEnd); check each against the live hooks page (code.claude.com/docs/en/hooks) first. Decide how a stale state clears after an interrupt, since Stop does not fire then (T6c).
+  - **Number keys:** give each session a stable key number (first free key 1 to 6, then page 2), kept while the session lives.
+  - **Protocol:** new `AgentMessage`s in `packages/protocol`: a full sessions snapshot in `ready` (so a reconnecting phone catches up) and an update when a session changes or ends; requests name their session.
+  - **Hook installer (A-1):** a command (for example `pnpm agent -- --install-hooks` and `--remove-hooks`) that backs up `~/.claude/settings.json`, adds Deck's HTTP hooks beside any existing ones without touching them, and removes exactly its own. With the agent stopped the hooks fail non-blocking and the terminal asks as usual (T8), so installing user-wide is safe. Show the user the diff before writing their settings; ask before running it on their real file.
+- **Done when:** with the hooks installed, starting, using and ending real Claude Code sessions on the PC shows each in the agent's log with the right state, tool calls and key number, and a reconnecting test client receives the snapshot. Brief A-1 to A-3 say what was built.
+
+### T15. Phone: the deck on the live link (planned; after T14)
+- **Goal:** the deck shows the PC's real sessions and answers real requests.
+- **Do:**
+  - **Pairing from the deck:** the pairing view (board IslandPair: "Pair With Your PC", the camera view and "Looking for a code") replaces the T8 test screen, and the pairing is remembered across launches. Check from live docs which storage to use (expo-secure-store holds the secret properly; if it is not in the current build, a new development build is needed: signing is set up, so minutes). Re-pairing from the deck later is open (layout mode is not built).
+  - **The island fed by the link:** a link-backed source for `store.ts` beside the demo; the demo stays behind a temporary switch for design work. Sessions, states, key numbers, tool calls and requests come from T14's messages; the Link light shows the real connection.
+  - **Keys:** Allow and Deny send `answer`; Always Allow sends an allow with the session-scoped rule (A-4; T8 tested only Allow and Deny, so test this end to end); a saved reply sends a denial with its text while a request shows (R-3, V-3) or a `followup` to a working session (V-4); Cancel on a queued follow-up removes it on the PC too (needs a message).
+  - **Live Activity:** follows the same data (it reads the island's state already).
+- **Done when:** with `pnpm agent` running and the phone paired, real sessions appear on the deck and in the Live Activity, a real request is answered from each answer key, a saved reply reaches a session, and the user has used it on real work and said so.
+
+### T16. Voice: Redirect with on-device speech recognition (planned; after dogfooding starts)
+- Hold Redirect to listen, transcript in the island, Send and Cancel (V-1 to V-7), with the session's project and file names as hint phrases (V-7). `expo-speech-recognition` is already in the development build. Re-check the audio session afterwards: the key sound may need setting again after listening (T11).
+
+### T17. The effort wheel, live (planned)
+- The PC agent changes a session's effort by typing into its console as T9 proved (E-3 to E-7): `/effort`, then the arrow keys and `s`, never Enter; stash and restore any draft; wait for the prompt box to go still; confirm from the screen and later hooks; otherwise "Not changed". See `spike/console-typing` and the brief's "Tested on this PC". The wheel's light follows E-6 with real sessions.
+
+### T18. Live Activity updates while Deck is in the background (planned)
+- The PC agent pushes Live Activity updates through Apple's push service, so the real island stays current while Deck is suspended (K-12, S7). Needs an APNs key from the user's Apple Developer account, `enablePushNotifications` in the expo-widgets plugin (a new build), and the activity's push token sent to the agent over the link. No project server.
+
 ### Later, from the brief
-Wiring the deck and island to the PC link (A-1 to A-3), layout mode, voice, the PC tray agent proper, and more agents. Take these from the brief's releases in order now that T1 to T8 are done.
+Layout mode (K-6), the PC tray agent proper (a tray icon and a window, A-1 and R-1's Saved Replies section), more agents (A-10 to A-13), and pairing more than one PC. Take these from the brief's releases in order after T18.
 
 ## Open decisions
 
