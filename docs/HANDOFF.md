@@ -614,7 +614,7 @@ Layout mode (K-6), the PC tray agent proper (a tray icon and a window, A-1 and R
 - **The tray agent's language.** The spike uses Node. The real agent needs a tray icon and Windows console calls; C# does both easily but shares no code with the phone, and the .NET SDK is not installed on this PC.
 - **How far to use console typing** beyond the effort wheel (brief, open decision 5).
 - **Final name, licence.** (The bundle identifier was decided in T10.)
-- **The `apple-design` skill** under `.claude/skills` contains Apple's guideline text. Remove it before making the repository public.
+- **The `apple-design` skill** under `.claude/skills` contains Apple's guideline text. It is no longer tracked (2026-11-15) and is in `.gitignore`, so it stays on this PC only. It is still in older commits; rewrite the history before making the repository public if those commits must not show it.
 
 ## How to run things
 

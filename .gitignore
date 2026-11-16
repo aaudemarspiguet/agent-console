@@ -11,3 +11,5 @@ apps/mobile/android/
 design/mockups/compare/
 # CanvasKit for Skia on the web, copied by pnpm --filter mobile setup-skia-web
 apps/mobile/public/canvaskit.wasm
+# third-party skill with Apple's guideline text; kept locally, not published
+.claude/skills/apple-design/
