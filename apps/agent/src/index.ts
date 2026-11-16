@@ -19,6 +19,7 @@ import { join } from 'node:path';
 import { WebSocketServer, type WebSocket } from 'ws';
 import qrcode from 'qrcode-terminal';
 import { runHookCommand } from './hooks.js';
+import { redirectEditRules } from './redirects.js';
 import { Sessions } from './sessions.js';
 import {
   PROTOCOL_VERSION,
@@ -267,10 +268,14 @@ const followups = new Map<string, string>();
  * Always Allow, this session only (A-4): Claude Code's own suggestions, moved to the
  * "session" destination (in memory, gone when the session ends). Kept: addRules, and
  * addDirectories, which Claude Code offers instead of a rule when the call writes to
- * a folder it has not allowed (seen on the phone 2026-11-14: `echo x >> log.txt`
- * asked again after an Always Allow that sent only a command rule). Left out:
- * setMode, which would change the whole session's permission mode. Without a rule
- * suggestion, a rule for this tool is added, narrowed to the exact command for Bash.
+ * a folder it has not allowed. Left out: setMode, which would change the whole
+ * session's permission mode. Without a rule suggestion, a rule for this tool is
+ * added, narrowed to the exact command for Bash.
+ *
+ * A Bash command that writes files through `>` or `>>` also gets an Edit rule for
+ * each target (redirects.ts): Claude Code checks those targets against Edit rules,
+ * not the command's rule, so without them `echo x >> log.txt` asked again (seen on
+ * the phone 2026-11-14, even with the suggested folder added).
  */
 function sessionRules(waiting: Waiting): object[] {
   const rules = waiting.suggestions
@@ -279,8 +284,12 @@ function sessionRules(waiting: Waiting): object[] {
   const folders = waiting.suggestions
     .filter((x: any) => x && x.type === 'addDirectories' && Array.isArray(x.directories) && x.directories.length > 0)
     .map((x: any) => ({ type: 'addDirectories', directories: x.directories, destination: 'session' }));
-  if (rules.length > 0) return [...rules, ...folders];
-  return [...fallbackRule(waiting), ...folders];
+  const r = waiting.request;
+  const targets = r.tool === 'Bash' ? redirectEditRules(r.summary, r.cwd) : [];
+  const edits = targets.length
+    ? [{ type: 'addRules', rules: targets.map((ruleContent) => ({ toolName: 'Edit', ruleContent })), behavior: 'allow', destination: 'session' }]
+    : [];
+  return [...(rules.length > 0 ? rules : fallbackRule(waiting)), ...edits, ...folders];
 }
 
 function fallbackRule(waiting: Waiting): object[] {
